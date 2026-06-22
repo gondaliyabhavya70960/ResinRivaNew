@@ -4,11 +4,6 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { siteConfig } from "@/lib/site";
-import { LenisProvider } from "@/components/providers/lenis-provider";
-import { Preloader } from "@/components/motion/preloader";
-import { AnnouncementBar } from "@/components/layout/announcement-bar";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -51,13 +46,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="flex min-h-dvh flex-col bg-background text-foreground antialiased">
-        <Preloader />
-        <LenisProvider>
-          <AnnouncementBar />
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </LenisProvider>
+        {children}
         <Analytics />
         <SpeedInsights />
       </body>
