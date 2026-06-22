@@ -30,12 +30,18 @@ vercel env pull .env.local
 - `DATABASE_URL` (Neon) and `BLOB_READ_WRITE_TOKEN` (Blob) are auto-injected once those stores are connected in the Vercel dashboard.
 - Set `AUTH_SECRET` (`openssl rand -base64 32`) and `ADMIN_PASSWORD` (seed only).
 
-## 4. Database (after Phase 3)
+## 4. Database
+Prisma's CLI reads `DATABASE_URL` from **`.env`** (it does *not* read `.env.local`).
+After `vercel env pull .env.local`, also expose it to Prisma — e.g. `cp .env.local .env`.
+
 ```bash
-npx prisma generate
-npx prisma migrate dev
-npx prisma db seed
+npm run db:generate     # prisma generate (also runs automatically on install)
+npm run db:deploy       # apply migrations (prisma migrate deploy) — fresh DB
+npm run db:seed         # seed admin user + sample content
+# First-time local dev can use `npm run db:migrate` (prisma migrate dev) instead of deploy.
 ```
+
+Set `ADMIN_PASSWORD` before seeding, or the seed uses a dev default (`ResinRiva@2026`) and warns.
 
 ## 5. Run the dev server
 ```bash
