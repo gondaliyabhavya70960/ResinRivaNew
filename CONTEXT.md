@@ -9,13 +9,13 @@
 
 | Item | Value |
 | --- | --- |
-| Current Phase | **Phase 6 — Public Core Pages** ✅ COMPLETE |
-| Next Phase | **Phase 7 — Shop + Order Flow** (awaiting permission) |
+| Current Phase | **Phase 7 — Shop + Order Flow** ✅ COMPLETE |
+| Next Phase | **Phase 8 — Portfolio + Blog + Search** (awaiting permission) |
 | Branch | `claude/epic-bell-dof5as` (all phases develop here → PR to `main`) |
 | Env | Owner set all Vercel env vars ✅ · DB auto-inits on deploy (non-fatal bootstrap) |
-| PRs | #1–7 merged (P1–P5 + wiring) · #8 (P6) open |
+| PRs | #1–8 merged (P1–P6 + wiring) · #9 (P7) open |
 | Repo | https://github.com/gondaliyabhavya70960/ResinRivaNew.git |
-| Last updated | Phase 6 |
+| Last updated | Phase 7 |
 
 ---
 
@@ -89,11 +89,18 @@
 - `@keyframes marquee` added to globals.css; all motion reduced-motion-gated. Verified: `tsc`/`next build`/`eslint` clean. All `(public)` pages are dynamic (layout fetches settings).
 - **Note:** links to `/shop`, `/product/[slug]`, `/portfolio/[slug]`, `/blog/[slug]`, `/custom-order` resolve in Phases 7–8.
 
+### ✅ Phase 7 — Shop + Order Flow (the WhatsApp ordering system)
+- **WhatsApp builder** `src/lib/whatsapp.ts` → `buildOrderMessage()`: exact structured message (product, selections, ref URLs, budget/timeline, customer block) per WHATSAPP_ORDER_GUIDE — used for the live preview AND saved verbatim to the Inquiry.
+- **Actions:** `createInquiry` (`src/actions/order.ts`, zod, saves PRODUCT|CUSTOM_ORDER Inquiry); `fetchProducts`/`countProducts` (`src/actions/shop.ts`, filter/sort/search/paginate; `ShopFilters`/`ShopProduct` types exported there too).
+- **Shop** `/shop` + `/shop/[category]`: `ShopControls` (search + sort → URL), category chips, `ShopGrid` (client; IntersectionObserver infinite scroll + Load-more; `key`-remount on filter change). Reuses `ProductCard`.
+- **Product detail** `/product/[slug]`: `ProductGallery` (thumbnails + zoom lightbox), `ModelViewer` (GLB/USDZ web component, dynamic import), video, dynamic **`OrderForm`** rendering `CustomizationField`s by type (SELECT/SIZE → select, SWATCH → chips w/ hex, TEXT/NUMBER, FILE → refs note), `ReferenceUploader` (public Blob `refs/`), customer details, **live WhatsApp preview**, Place Order → open wa tab (gesture-preserving) → `createInquiry` → `sessionStorage` → push `/whatsapp-order`. Related products + `generateMetadata`.
+- **Custom Order** `/custom-order` (`CustomOrderForm`) → `createInquiry` (CUSTOM_ORDER). **WhatsApp Order** `/whatsapp-order` fallback (reads sessionStorage via `useSyncExternalStore`; summary + "Open WhatsApp").
+- Verified: `tsc` / `next build` / `eslint` clean. **Note:** portfolio/blog public detail + search = Phase 8.
+
 ---
 
 ## 2. Pending Features (by phase)
 
-- **Phase 7** — Shop (filters/sort/search/infinite scroll/quick view), Category pages, Product Detail (gallery/video/model-viewer/dynamic form/reference upload/live preview/save-then-redirect), Custom Order, WhatsApp Order fallback page.
 - **Phase 8** — Public Portfolio (case studies, before/after, lightbox), Blog listing + detail, Instagram gallery, Search.
 - **Phase 9** — Motion polish (mouse tracking, GSAP scroll, counters, marquee, cursor glow, page transitions, refraction + Safari fallback, reduced-motion audit, perf/INP pass).
 - **Phase 10** — SEO (Metadata API, OG images, schema markup, sitemap.ts, robots.ts, canonicals), Vercel prod deploy + custom domain, analytics, finish docs.
@@ -206,7 +213,7 @@ styles/
 
 - ✅ `app/api/auth/[...nextauth]` — Auth.js v5 handler (GET/POST). **Built (Phase 3).**
 - ✅ `app/api/upload/route.ts` — Vercel Blob `handleUpload`. **Built (Phase 4)** — admin uploads require a session; `refs/` prefix anonymous (Phase 7).
-- Server Actions **built:** categories/products/media (P4); blog/portfolio/inquiries/testimonials/faqs/settings/users (P5); `submitContact` → CONTACT `Inquiry` (P6). All in `src/actions/`. Public reads in `src/lib/queries.ts` (P6).
+- Server Actions **built:** categories/products/media (P4); blog/portfolio/inquiries/testimonials/faqs/settings/users (P5); `submitContact` (P6); `createInquiry` (order) + `fetchProducts`/`countProducts` (shop) (P7). All in `src/actions/`. Public reads in `src/lib/queries.ts`. `buildOrderMessage` in `src/lib/whatsapp.ts`.
 - `app/api/search/route.ts` — Postgres search across products/posts/portfolio (Phase 8).
 - Server Actions (planned): product CRUD, category CRUD, portfolio CRUD, blog CRUD, inquiry create + status update, testimonials/FAQs/settings CRUD, contact submit, `createInquiry` (order flow).
 
@@ -261,13 +268,18 @@ styles/
 - Pages: `/studio/blog` (+new,[id]/edit), `/studio/portfolio` (+new,[id]/edit), `/studio/inquiries` (+[id]), `/studio/testimonials` (+[id]/edit), `/studio/faqs` (+[id]/edit), `/studio/settings`, `/studio/users`, `/studio/activity`.
 - Deps: `@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/pm` (v3.27).
 
+**Public site — Phase 6–7**
+- Sections (`src/components/sections`): `Hero`, `StatCounters`, `Marquee`, `TestimonialsCarousel`, `FaqAccordion`, `ContactForm`.
+- Product/shop (`src/components/product`, `src/components/shop`): `ProductCard` (+`priceLabel`), `ProductGallery`, `ModelViewer`, `OrderForm`, `CustomOrderForm`, `ReferenceUploader`, `ShopGrid`, `ShopControls`.
+- Public pages: `/`, `/about`, `/process`, `/faq`, `/contact`, `/privacy`, `/terms`, `/shop` (+`/[category]`), `/product/[slug]`, `/custom-order`, `/whatsapp-order`. All under `(public)` (force-dynamic).
+
 ---
 
 ## 9. Current Progress
 
-- Phases 1–6 complete. Full admin CMS (`/studio`) **plus** the public core: real DB-driven Home, About, Process, FAQ, Contact, Privacy, Terms; chrome wired to SiteSettings.
-- Owner set all Vercel env vars; production deploy auto-migrates + seeds. Public pages are `force-dynamic` (read DB at runtime).
-- Remaining public: shop + product detail + order flow (Phase 7); portfolio/blog detail + search (Phase 8). Default-branch flip to `main` + domain still owner's to confirm.
+- Phases 1–7 complete. Admin CMS + public core + **the full Shop & WhatsApp order flow** (shop, product detail with dynamic customization + 3D viewer + reference uploads + live preview, custom order, fallback page).
+- Owner set all Vercel env vars; production deploy auto-migrates + seeds. Public pages `force-dynamic`.
+- Remaining public: portfolio/blog public detail + search (Phase 8); then motion polish (P9), SEO + deploy (P10), competitor + seeding (P11). Default-branch flip to `main` + domain still owner's to confirm.
 
 ---
 
@@ -303,13 +315,12 @@ NEXT_PUBLIC_SITE_URL=https://shop.bhavyagondaliya.co.in
 
 ## 12. EXACT Next Phase + Next Tasks
 
-### ▶ Phase 7 — Shop + Order Flow — DO NOT START WITHOUT PERMISSION
+### ▶ Phase 8 — Portfolio + Blog + Search — DO NOT START WITHOUT PERMISSION
 
-1. **Shop** `/shop`: product grid + filters (category, price/featured), search, sort, load-more / infinite scroll, quick view; **category pages** `/shop/[category]`. Variant chips on cards. Reuse `ProductCard`.
-2. **Product detail** `/product/[slug]`: gallery (zoom/lightbox, hover 2nd image), video, **model-viewer** (GLB/USDZ via `@google/model-viewer`), **dynamic customization form** rendered from `CustomizationField`s, **reference-image client-upload to Blob** (`refs/` prefix), customer details, **LIVE WhatsApp message preview**, **Place Order → save `Inquiry` (source PRODUCT) → redirect to `wa.me`**. Related products.
-3. **Custom Order** `/custom-order`: large requirement form, reference upload, budget/timeline → save `Inquiry` (CUSTOM_ORDER) + WhatsApp.
-4. **WhatsApp Order** fallback `/whatsapp-order`: summary + "Open WhatsApp" button (for blocked auto-redirect).
-5. Expand `src/lib/whatsapp.ts` with the **structured message builder** (product, selections, ref URLs, customer block) per the WHATSAPP_ORDER_GUIDE format. New `createInquiry` Server Action.
-6. `npm run build` check, update CONTEXT.md, commit, push, STOP.
+1. **Public Portfolio** `/portfolio` (case-study grid + filter by category) and `/portfolio/[slug]` (story, **before/after slider** [client], gallery lightbox, video, results metadata). `generateMetadata`.
+2. **Public Blog** `/blog` (list + category/tag filter + pagination) and `/blog/[slug]` (render **Tiptap JSON → HTML** via a small recursive renderer or `@tiptap/static-renderer`, cover, author, date, tags, related posts, internal product links). `generateMetadata` + Article schema.
+3. **Search** `/search` (Postgres ILIKE across products, posts, portfolio) + wire a header search entry.
+4. Add public query helpers (portfolio/blog/search) to `src/lib/queries.ts`. Reuse `ProductGallery`/lightbox patterns.
+5. `npm run build` check, update CONTEXT.md, commit, push, STOP.
 
-**Order flow (exact):** validate (Zod) → client-upload refs to Blob → Server Action saves `Inquiry` (incl. final `whatsappMessage`) → `window.open` the `wa.me` URL. Show the live preview before Place Order.
+**Note:** Tiptap content is stored as JSON — render server-side. Keep pages `force-dynamic` (DB at runtime). Internal links from posts to `/product/[slug]` per the originality/SEO goal.
