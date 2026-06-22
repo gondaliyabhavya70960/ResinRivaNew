@@ -11,7 +11,9 @@
 | --- | --- |
 | Current Phase | **Phase 1 — Repo + Documentation** ✅ COMPLETE |
 | Next Phase | **Phase 2 — Scaffold + Design System** (awaiting permission) |
-| Branch | `claude/epic-bell-dof5as` |
+| Branch | `claude/epic-bell-dof5as` (all phases develop here) |
+| Base branch | `main` (empty initial commit; PR base) |
+| Tracking PR | #1 — https://github.com/gondaliyabhavya70960/ResinRivaNew/pull/1 (draft) |
 | Repo | https://github.com/gondaliyabhavya70960/ResinRivaNew.git |
 | Last updated | Phase 1 |
 
@@ -34,7 +36,8 @@
   - `COMPETITOR.md` — competitor research scaffold (populated in Phase 11).
   - `.gitignore` — Next.js + Prisma + env + Vercel ignores.
   - `.env.example` — env var names only (no secrets).
-- Commit + push to `claude/epic-bell-dof5as`, open draft PR.
+- Created an empty-commit `main` branch to serve as the PR base, rebased Phase 1 onto it.
+- Committed + pushed to `claude/epic-bell-dof5as`; opened draft PR #1 (base `main`). No CI configured on the repo yet.
 
 ---
 
