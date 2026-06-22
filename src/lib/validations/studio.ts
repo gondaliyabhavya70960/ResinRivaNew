@@ -61,6 +61,56 @@ export const mediaRecordSchema = z.object({
   bytes: z.coerce.number().int().optional(),
 });
 
+export const testimonialSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  location: z.string().optional(),
+  quote: z.string().min(1, "Quote is required"),
+  rating: z.coerce.number().int().min(1).max(5).default(5),
+  avatarUrl: z.string().optional(),
+  order: z.coerce.number().int().min(0).default(0),
+});
+
+export const faqSchema = z.object({
+  question: z.string().min(1, "Question is required"),
+  answer: z.string().min(1, "Answer is required"),
+  order: z.coerce.number().int().min(0).default(0),
+});
+
+export const blogCategorySchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  slug: slugSchema,
+});
+
+export const portfolioSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  slug: slugSchema,
+  story: z.string().optional(),
+  beforeImageUrl: z.string().optional(),
+  afterImageUrl: z.string().optional(),
+  videoUrl: z.string().url().optional().or(z.literal("")),
+  categoryId: z.string().optional(),
+  status: z.enum(["DRAFT", "PUBLISHED"]).default("DRAFT"),
+  images: z.array(productImageSchema).default([]),
+});
+
+export const blogPostSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  slug: slugSchema,
+  excerpt: z.string().optional(),
+  coverImage: z.string().optional(),
+  authorName: z.string().optional(),
+  blogCategoryId: z.string().optional(),
+  status: z.enum(["DRAFT", "PUBLISHED"]).default("DRAFT"),
+  seoTitle: z.string().optional(),
+  seoDescription: z.string().optional(),
+});
+
+export const userSchema = z.object({
+  name: z.string().optional(),
+  email: z.email(),
+  role: z.enum(["ADMIN", "EDITOR"]).default("EDITOR"),
+});
+
 /** Turn a slug-friendly string from any text. */
 export function slugify(input: string) {
   return input
