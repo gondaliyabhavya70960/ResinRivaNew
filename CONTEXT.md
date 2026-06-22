@@ -253,7 +253,7 @@ styles/
 - `public/` is currently empty (default Next/Vercel SVGs removed); real logo/og/poster assets added later. Favicon is `src/app/favicon.ico` (App Router convention).
 - `LiquidGlass` renders its SVG displacement filter per refracting instance (duplicate `#rr-glass` id) — harmless; dedupe to a single global def in Phase 9.
 - Socials (Instagram/Facebook) are placeholder `#` links until set in Site Settings (Phase 5).
-- **DB migrate/seed run automatically on Vercel deploy** via the `vercel-build` script (`prisma migrate deploy && prisma db seed && next build`). The sandbox egress **allowlist blocks Neon (`*.neon.tech`) + Blob (`*.blob.vercel-storage.com`)**, so they can't run here (confirmed: 403 "host not in allowlist"). Seed is first-run-guarded (`SEED_FORCE=1` to re-run). Manual run from open-egress machine: `npm run db:deploy && npm run db:seed`.
+- **DB migrate/seed run automatically on Vercel deploy** via `vercel-build` → `node scripts/db-bootstrap.mjs && next build` (bootstrap is **non-fatal** — best-effort migrate+seed, never breaks the build; the first Vercel deploy with the strict `migrate && seed && build` chain FAILED, hence the resilient wrapper). Neon `channel_binding` stripped in `db.ts`/`seed.ts`. Sandbox egress **allowlist blocks Neon + Blob** (403), so they can't run here. Seed first-run-guarded (`SEED_FORCE=1`). Manual: `npm run db:deploy && npm run db:seed` from open-egress machine.
 - **Default branch** is still `claude/epic-bell-dof5as`; switch to `main` via GitHub UI (no MCP/API tool for this repo setting).
 - Prisma CLI reads `.env` (not `.env.local`). After `vercel env pull .env.local`, also expose `DATABASE_URL` to the CLI (e.g. `cp .env.local .env`).
 

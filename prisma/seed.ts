@@ -1,7 +1,9 @@
 import { PrismaClient, type Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+// Strip Neon's `channel_binding` (Prisma can reject it); TLS stays via sslmode.
+const dbUrl = process.env.DATABASE_URL?.replace(/channel_binding=[^&]*&?/gi, "").replace(/[?&]$/, "");
+const prisma = new PrismaClient(dbUrl ? { datasourceUrl: dbUrl } : undefined);
 
 // Placeholder images via picsum (always render). Replaced with real ResinRiva
 // photos before launch — alt text is tagged "placeholder".

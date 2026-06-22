@@ -31,8 +31,8 @@ vercel link
 
 > Confirm both `DATABASE_URL` **and** `DATABASE_URL_UNPOOLED` exist (the schema's `directUrl` needs the unpooled one for migrations).
 
-## 4. Database init on deploy (automatic)
-The `vercel-build` script runs **`prisma migrate deploy && prisma db seed`** before `next build`, so on Vercel the schema is created and the admin user + sample content are seeded automatically on first deploy. The seed is first-run-guarded, so later deploys don't overwrite admin edits (use `SEED_FORCE=1` to re-run; Phase 11's bulk seed uses this).
+## 4. Database init on deploy (automatic, non-fatal)
+The `vercel-build` script runs **`node scripts/db-bootstrap.mjs && next build`**. The bootstrap does a best-effort `prisma migrate deploy` + `prisma db seed` and **never fails the build** — if the DB env isn't ready it logs a warning and the deploy still succeeds; once the env is correct the next deploy applies the migration + seed. The seed is first-run-guarded so later deploys don't overwrite admin edits (`SEED_FORCE=1` to re-run; Phase 11's bulk seed uses this). Neon's `channel_binding` param is stripped from the connection string at runtime (Prisma can reject it; TLS stays via `sslmode`).
 
 > **Why not from the local sandbox?** Claude Code's web sandbox uses a network egress **allowlist** that blocks the Neon (`*.neon.tech`) and Blob (`*.blob.vercel-storage.com`) hosts — so migrate/seed can't run there. Vercel's build network reaches them fine. To run migrate/seed from elsewhere, use a machine with open egress (or add those hosts to the environment's egress settings).
 
