@@ -236,7 +236,7 @@ styles/
 - `public/` is currently empty (default Next/Vercel SVGs removed); real logo/og/poster assets added later. Favicon is `src/app/favicon.ico` (App Router convention).
 - `LiquidGlass` renders its SVG displacement filter per refracting instance (duplicate `#rr-glass` id) — harmless; dedupe to a single global def in Phase 9.
 - Socials (Instagram/Facebook) are placeholder `#` links until set in Site Settings (Phase 5).
-- DB **migrate + seed not yet run** — no `DATABASE_URL` in session. Owner runs `npm run db:deploy && npm run db:seed` once Neon is connected. Seed uses a dev default `ADMIN_PASSWORD` if unset (it warns).
+- **DB migrate/seed run automatically on Vercel deploy** via the `vercel-build` script (`prisma migrate deploy && prisma db seed && next build`). The sandbox egress **allowlist blocks Neon (`*.neon.tech`) + Blob (`*.blob.vercel-storage.com`)**, so they can't run here (confirmed: 403 "host not in allowlist"). Seed is first-run-guarded (`SEED_FORCE=1` to re-run). Manual run from open-egress machine: `npm run db:deploy && npm run db:seed`.
 - **Default branch** is still `claude/epic-bell-dof5as`; switch to `main` via GitHub UI (no MCP/API tool for this repo setting).
 - Prisma CLI reads `.env` (not `.env.local`). After `vercel env pull .env.local`, also expose `DATABASE_URL` to the CLI (e.g. `cp .env.local .env`).
 
@@ -255,6 +255,8 @@ RESEND_API_KEY               # optional — Resend via Vercel Marketplace
 NEXT_PUBLIC_WHATSAPP_NUMBER=917096036250
 NEXT_PUBLIC_SITE_URL=https://shop.bhavyagondaliya.co.in
 ```
+
+**Connection status (Phase 3.x):** Live **Neon** + **Blob** creds are in `.env.local`/`.env` (git-ignored, never committed). Schema `datasource` now has `url=DATABASE_URL` (pooled) + `directUrl=DATABASE_URL_UNPOOLED` (direct, for migrations). A fresh `AUTH_SECRET` was generated into `.env.local`. **Owner must add to Vercel env:** `AUTH_SECRET`, `AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `NEXT_PUBLIC_*` (Neon + Blob vars auto-inject). DB initialises on first Vercel deploy.
 
 ---
 

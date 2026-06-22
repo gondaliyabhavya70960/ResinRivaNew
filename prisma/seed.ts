@@ -278,6 +278,14 @@ const posts = [
 ];
 
 async function main() {
+  // First-run guard: skip if the DB is already initialised so redeploys don't
+  // overwrite admin edits. Set SEED_FORCE=1 to re-run (e.g. Phase 11 bulk seed).
+  const force = process.env.SEED_FORCE === "1";
+  if (!force && (await prisma.user.count()) > 0) {
+    console.log("ℹ  Seed skipped — database already initialised (SEED_FORCE=1 to re-run).");
+    return;
+  }
+
   // Site settings (singleton)
   await prisma.siteSettings.upsert({
     where: { id: "singleton" },
