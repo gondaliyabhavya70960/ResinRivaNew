@@ -1,0 +1,190 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   ResinRiva — Brand design tokens (static)
+   Max ~4 core colours per screen, one metallic only (gold).
+   ============================================================ */
+@theme {
+  --color-ivory: #f4efe9;
+  --color-ink: #14151d;
+  --color-ocean: #0e3a53;
+  --color-teal: #1b6e7a;
+  --color-amber: #c8881f;
+  --color-amber-light: #e0a24a;
+  --color-gold: #d4af37;
+
+  --shadow-luxe: 0 24px 60px -24px rgba(14, 58, 83, 0.45);
+  --shadow-glass: 0 8px 40px -12px rgba(14, 58, 83, 0.35);
+  --shadow-gold: 0 10px 36px -14px rgba(212, 175, 55, 0.55);
+}
+
+/* ============================================================
+   Semantic theme — light (ivory) is the default surface
+   ============================================================ */
+:root {
+  --radius: 0.625rem;
+
+  --background: #f4efe9;
+  --foreground: #14151d;
+  --card: #faf6f0;
+  --card-foreground: #14151d;
+  --popover: #faf6f0;
+  --popover-foreground: #14151d;
+  --primary: #0e3a53;
+  --primary-foreground: #f4efe9;
+  --secondary: #1b6e7a;
+  --secondary-foreground: #f4efe9;
+  --muted: #e9e2d8;
+  --muted-foreground: #5c5b57;
+  --accent: #c8881f;
+  --accent-foreground: #1a1206;
+  --destructive: #8e2c2c;
+  --border: rgba(20, 21, 29, 0.12);
+  --input: rgba(20, 21, 29, 0.14);
+  --ring: #0e3a53;
+}
+
+.dark {
+  --background: #14151d;
+  --foreground: #f4efe9;
+  --card: #1b1c26;
+  --card-foreground: #f4efe9;
+  --popover: #1b1c26;
+  --popover-foreground: #f4efe9;
+  --primary: #e0a24a;
+  --primary-foreground: #14151d;
+  --secondary: #1b6e7a;
+  --secondary-foreground: #f4efe9;
+  --muted: #23242e;
+  --muted-foreground: #a9a7a1;
+  --accent: #d4af37;
+  --accent-foreground: #14151d;
+  --destructive: #c2410c;
+  --border: rgba(244, 239, 233, 0.12);
+  --input: rgba(244, 239, 233, 0.16);
+  --ring: #e0a24a;
+}
+
+/* ============================================================
+   Map semantic tokens + fonts to Tailwind utilities
+   ============================================================ */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-fraunces);
+}
+
+/* ============================================================
+   Base layer
+   ============================================================ */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--font-display), ui-serif, Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--color-gold) 32%, transparent);
+    color: var(--color-ink);
+  }
+}
+
+/* ============================================================
+   Components — liquid glass + ambient surfaces
+   ============================================================ */
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+  }
+  .glass-dark {
+    background: rgba(20, 21, 29, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+  /* Ambient gradient-mesh background plate (ivory) */
+  .mesh-ivory {
+    background-color: var(--color-ivory);
+    background-image:
+      radial-gradient(at 18% 22%, color-mix(in oklab, var(--color-amber-light) 22%, transparent) 0px, transparent 45%),
+      radial-gradient(at 82% 12%, color-mix(in oklab, var(--color-teal) 16%, transparent) 0px, transparent 40%),
+      radial-gradient(at 65% 88%, color-mix(in oklab, var(--color-ocean) 14%, transparent) 0px, transparent 45%);
+  }
+  /* Ambient gradient-mesh background plate (ink) */
+  .mesh-ink {
+    background-color: var(--color-ink);
+    background-image:
+      radial-gradient(at 12% 18%, color-mix(in oklab, var(--color-ocean) 55%, transparent) 0px, transparent 45%),
+      radial-gradient(at 88% 28%, color-mix(in oklab, var(--color-teal) 32%, transparent) 0px, transparent 42%),
+      radial-gradient(at 50% 92%, color-mix(in oklab, var(--color-amber) 18%, transparent) 0px, transparent 50%);
+  }
+}
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .contain-strict {
+    contain: strict;
+  }
+}
+
+/* ============================================================
+   Global reduced-motion guard (effects also gate in JS)
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

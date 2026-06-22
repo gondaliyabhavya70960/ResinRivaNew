@@ -9,13 +9,13 @@
 
 | Item | Value |
 | --- | --- |
-| Current Phase | **Phase 1 — Repo + Documentation** ✅ COMPLETE |
-| Next Phase | **Phase 2 — Scaffold + Design System** (awaiting permission) |
+| Current Phase | **Phase 2 — Scaffold + Design System** ✅ COMPLETE |
+| Next Phase | **Phase 3 — Database + Auth (Vercel-native)** (awaiting permission) |
 | Branch | `claude/epic-bell-dof5as` (all phases develop here) |
-| Base branch | `main` (empty initial commit; PR base) |
-| Tracking PR | #1 — https://github.com/gondaliyabhavya70960/ResinRivaNew/pull/1 (draft) |
+| Base branch | `main` (PR base) |
+| PRs | #1 (Phase 1) merged ✅ · #2 (auto-sync main→branch) merged ✅ · #3 (Phase 2) open |
 | Repo | https://github.com/gondaliyabhavya70960/ResinRivaNew.git |
-| Last updated | Phase 1 |
+| Last updated | Phase 2 |
 
 ---
 
@@ -37,13 +37,21 @@
   - `.gitignore` — Next.js + Prisma + env + Vercel ignores.
   - `.env.example` — env var names only (no secrets).
 - Created an empty-commit `main` branch to serve as the PR base, rebased Phase 1 onto it.
-- Committed + pushed to `claude/epic-bell-dof5as`; opened draft PR #1 (base `main`). No CI configured on the repo yet.
+- Committed + pushed to `claude/epic-bell-dof5as`; opened draft PR #1 (base `main`). Merged ✅.
+
+### ✅ Phase 2 — Scaffold + Design System
+- **Stack installed:** Next.js **16.2.9** (App Router, TS, Turbopack), React 19.2, Tailwind **v4** (CSS-first `@theme`, NO `tailwind.config`), shadcn/ui (configured via `components.json`, new-york), motion 12.40, gsap 3.15, lenis 1.3, lucide-react 1.21, react-hook-form 7.80 + zod 4 + @hookform/resolvers, swiper 12 + embla-carousel-react 8, @vercel/blob 2.4, @vercel/analytics 2 + @vercel/speed-insights 2, @google/model-viewer 4.3, cva + clsx + tailwind-merge + @radix-ui/react-slot, tw-animate-css (dev).
+- **Design tokens** in `src/app/globals.css`: `@theme` brand colours (ivory/ink/ocean/teal/amber/amber-light/gold) + luxe/glass/gold shadow vars; semantic shadcn tokens (light default = ivory, `.dark` = ink) mapped in `@theme inline`; `.glass`/`.glass-dark`/`.mesh-ivory`/`.mesh-ink` utilities; global reduced-motion guard.
+- **Fonts:** Fraunces (display → `--font-fraunces`) + Inter (body → `--font-inter`) via `next/font/google`.
+- **Primitives + chrome** (see §8): Container, Section, Button, Logo/Monogram, social icons, LiquidGlass, MouseParallax, ScrollReveal, Preloader, LenisProvider, Header (glass sticky, adaptive tone, mobile menu), Footer, AnnouncementBar. Wired in `layout.tsx` with Vercel Analytics + Speed Insights.
+- **Home** (`page.tsx`) = Phase-2 placeholder demonstrating the system (real DB-driven home = Phase 6).
+- **Verified:** `tsc --noEmit` clean · `next build` green (Google Fonts fetch OK) · `eslint` clean.
+- **Deferred:** `vercel link` — `vercel` CLI not installed and linking needs the owner's Vercel auth → manual owner step (do alongside Neon + Blob creation in Phase 3). lucide-react v1 removed brand icons → custom `social-icons.tsx`.
 
 ---
 
 ## 2. Pending Features (by phase)
 
-- **Phase 2** — Next.js scaffold, Tailwind theme w/ design tokens, fonts (Fraunces + Inter), core primitives (LiquidGlass, MouseParallax, ScrollReveal, Preloader, Container, Section, Button), Header + Footer, Lenis provider, `vercel link`.
 - **Phase 3** — Neon Postgres + Blob store (Vercel-native), full Prisma schema + migrate + seed, Auth.js v5 credentials + `/studio` middleware.
 - **Phase 4** — `/studio` layout + login + dashboard; Products CRUD w/ Blob gallery upload + Custom Form Builder; Categories CRUD; Media Library.
 - **Phase 5** — Blog (Tiptap), Portfolio, Inquiries/WhatsApp Orders + status workflow, Testimonials, FAQs, SEO mgmt, Site Settings, User Roles, Activity Logs.
@@ -168,22 +176,49 @@ styles/
 
 ## 8. Component Inventory (with props — none built yet)
 
-> Populated starting Phase 2. Format: `ComponentName(props) — purpose`.
+> Format: `ComponentName(props) — purpose` · `"use client"` noted.
 
-- _(none yet)_
+**UI primitives — `src/components/ui`**
+- `Container({ as?, className, ...html })` — centered `max-w-7xl` responsive wrapper.
+- `Section({ id?, eyebrow?, index?, title?, description?, bare?, containerClassName?, className })` — vertical-rhythm section + editorial header (eyebrow + numbered marker).
+- `Button({ variant: default|gold|ocean|outline|ghost|glass|link, size: sm|default|lg|icon, asChild? })` — CVA + Radix Slot.
+
+**Brand — `src/components/brand`**
+- `Logo({ className?, withMonogram? })`, `Monogram({ className? })` — RR resin-droplet mark + wordmark.
+- `InstagramIcon(svgProps)`, `FacebookIcon(svgProps)` — inline brand glyphs (lucide v1 dropped brand icons).
+
+**Motion — `src/components/motion`**
+- `LiquidGlass({ as?, refraction?, className, ...html })` — frosted glass; Chromium refraction via `useSyncExternalStore` feature-detect, blur fallback. `"use client"`
+- `MouseParallax({ children, className?, strength? })` — pointer parallax (useMotionValue/Spring/Transform); reduced-motion safe. `"use client"`
+- `ScrollReveal({ children, className?, delay?, y?, once? })` — whileInView fade + rise; reduced-motion safe. `"use client"`
+- `Preloader()` — first-load cinematic overlay. `"use client"`
+
+**Providers / layout**
+- `LenisProvider({ children })` — Lenis smooth scroll (off under reduced-motion). `"use client"`
+- `Header()` — glass sticky nav, adaptive tone, mobile menu, WhatsApp CTA. `"use client"`
+- `Footer()` — luxury multi-column footer (contact tel/mailto/maps, socials).
+- `AnnouncementBar()` — slim top bar + WhatsApp link.
+
+**Lib — `src/lib`**
+- `cn(...inputs)` — Tailwind class merge. *(utils.ts)*
+- `siteConfig`, `mainNav`, `footerNav` — static site config (DB `SiteSettings`-driven from Phase 5). *(site.ts)*
+- `waLink(message?)`, `defaultEnquiry` — wa.me helper (full structured builder in Phase 7). *(whatsapp.ts)*
 
 ---
 
 ## 9. Current Progress
 
-- Phase 1 complete: all root docs + `.gitignore` + `.env.example` created and committed.
-- No application code, dependencies, database, or Vercel link yet (Phases 2–3).
+- Phases 1–2 complete. App scaffolds and builds; design system, primitives, Header/Footer/providers in place; placeholder home renders.
+- No database, auth, admin, or real content pages yet (Phase 3+). `vercel link` + Neon/Blob creation pending (owner, Phase 3).
 
 ---
 
 ## 10. Known Issues
 
-- _(none yet)_
+- `vercel link` not run (CLI absent / needs the owner's Vercel auth) — do during Phase 3 service setup.
+- `public/` is currently empty (default Next/Vercel SVGs removed); real logo/og/poster assets added later. Favicon is `src/app/favicon.ico` (App Router convention).
+- `LiquidGlass` renders its SVG displacement filter per refracting instance (duplicate `#rr-glass` id) — harmless; dedupe to a single global def in Phase 9.
+- Socials (Instagram/Facebook) are placeholder `#` links until set in Site Settings (Phase 5).
 
 ---
 
@@ -205,16 +240,14 @@ NEXT_PUBLIC_SITE_URL=https://shop.bhavyagondaliya.co.in
 
 ## 12. EXACT Next Phase + Next Tasks
 
-### ▶ Phase 2 — Scaffold + Design System (DO NOT START WITHOUT PERMISSION)
+### ▶ Phase 3 — Database + Auth (Vercel-native) — DO NOT START WITHOUT PERMISSION
 
-1. `npx create-next-app@latest` — App Router, TypeScript, Tailwind, `src/` dir, ESLint.
-2. Install: `shadcn/ui`, `motion` (Framer Motion), `gsap`, `lenis`, `lucide-react`, `react-hook-form` + `zod` + `@hookform/resolvers`, `swiper` + `embla-carousel-react`, `@vercel/blob`, `@vercel/analytics`, `@vercel/speed-insights`, `@google/model-viewer`.
-3. Tailwind theme — add design tokens (colors above) + font CSS variables.
-4. `next/font` — Fraunces (display) + Inter (body), exposed as CSS variables.
-5. Build primitives in `src/components/`: `LiquidGlass`, `MouseParallax`, `ScrollReveal`, `Preloader`, `Container`, `Section`, `Button`.
-6. Global `Header` (glass sticky nav) + `Footer` (brand, contact, WhatsApp, map link, socials) using EXACT business info.
-7. Lenis smooth-scroll provider wrapping the app.
-8. `vercel link` to connect local repo to the Vercel project.
-9. Update CONTEXT.md (component inventory, decisions, files), commit, push, STOP.
+1. **Owner action:** in Vercel Dashboard → Storage, create **Neon Postgres** (native integration) + a **Blob** store; run `vercel link`, then `vercel env pull .env.local` (`DATABASE_URL` + `BLOB_READ_WRITE_TOKEN` auto-injected). Set `AUTH_SECRET` (`openssl rand -base64 32`) and `ADMIN_PASSWORD`.
+2. Install Prisma + auth: `prisma` (dev), `@prisma/client`, `@auth/prisma-adapter`, `next-auth@beta` (Auth.js v5), `bcryptjs` + `@types/bcryptjs`.
+3. `prisma/schema.prisma` — ALL models from §3 (User, Category, Product, ProductImage, CustomizationField, Inquiry, Portfolio, PortfolioImage, BlogPost, BlogCategory, Tag, BlogPostTag, Testimonial, Faq, Media, SiteSettings, ActivityLog) with the listed enums. `src/lib/db.ts` Prisma singleton.
+4. `prisma migrate dev` + `prisma generate`.
+5. `prisma/seed.ts` — admin user (from `ADMIN_EMAIL`/`ADMIN_PASSWORD`, bcrypt-hashed) + sample categories, products (with CustomizationFields), posts, testimonials, FAQs, and the `SiteSettings` singleton (exact business info). Wire `prisma.seed` in package.json.
+6. Auth.js v5: `src/lib/auth.ts` (Credentials provider, session strategy `jwt`, admin role), `src/app/api/auth/[...nextauth]/route.ts`, `middleware.ts` protecting `/studio/*` except `/studio/login`.
+7. `npm run build` check, update CONTEXT.md, commit, push, STOP.
 
-**Note:** keep all motion behind `prefers-reduced-motion`; keep glass surfaces small; follow the design tokens exactly.
+**Note:** Phase 3 needs the owner to provision Neon + Blob first (or supply `DATABASE_URL`). If env is unavailable in-session, write all schema/seed/auth code + docs and note that `migrate`/`seed` must be run once the connection string is present. Keep all secrets out of git.
