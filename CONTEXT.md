@@ -9,13 +9,13 @@
 
 | Item | Value |
 | --- | --- |
-| Current Phase | **Phase 4 — Admin Core** ✅ COMPLETE (code; live admin needs deployed DB/Blob) |
-| Next Phase | **Phase 5 — Admin Rest** (awaiting permission) |
+| Current Phase | **Phase 5 — Admin Rest** ✅ COMPLETE (full admin CMS; live needs deployed DB/Blob) |
+| Next Phase | **Phase 6 — Public Core Pages** (awaiting permission) |
 | Branch | `claude/epic-bell-dof5as` (all phases develop here → PR to `main`) |
-| Default branch | ⚠ still `claude/epic-bell-dof5as` — change to `main` in GitHub UI (Settings → General); no MCP/API tool exposes this setting |
-| PRs | #1–3 merged · #4 (P3) merged · #5 (auto-sync) merged · #6 (deploy-wiring + P4) open |
+| Env | Owner set all Vercel env vars ✅ · DB auto-inits on deploy (non-fatal bootstrap) |
+| PRs | #1–6 merged (P1–P4 + wiring) · #7 (P5) open |
 | Repo | https://github.com/gondaliyabhavya70960/ResinRivaNew.git |
-| Last updated | Phase 4 |
+| Last updated | Phase 5 |
 
 ---
 
@@ -69,11 +69,21 @@
 - All studio pages `force-dynamic` (no DB hit at build). Verified: `tsc` clean · `next build` green · `eslint` clean.
 - **Note:** live admin needs the deployed DB + Blob (sandbox egress blocks them). Remaining admin (Blog/Portfolio/Inquiries/Testimonials/FAQ/SEO/Settings/Users/Activity) = Phase 5.
 
+### ✅ Phase 5 — Admin Rest (full admin CMS complete)
+- Sidebar expanded to all sections. New Server Actions (`src/actions/`): `blog`, `portfolio`, `inquiries`, `testimonials`, `faqs`, `settings`, `users` — zod-validated, auth-guarded, `revalidatePath` + `ActivityLog`.
+- **Blog:** posts CRUD with **Tiptap** editor (`TiptapEditor`, content stored as JSON), blog categories (inline), tags (comma → upserted `Tag` + `BlogPostTag` join), cover image, publish date, SEO. Pages list/new/[id]/edit.
+- **Portfolio:** CRUD — story, before/after (`SingleImagePicker`), video, gallery (`ImageUploader`), results metadata (`ResultsMetaBuilder` → Json), category, status. Pages list/new/[id]/edit.
+- **Inquiries / WhatsApp Orders:** list + status filter chips + `InquiryStatusSelect` (NEW→CONTACTED→CONFIRMED→DELIVERED) + detail (customer, selections, reference links, whatsappMessage, delete via inline server action).
+- **Testimonials** + **FAQs:** list + inline new form + edit page.
+- **Site Settings:** singleton form (brand, contact, socials, SEO defaults) → `saveSettings` upsert; `revalidatePath("/","layout")`.
+- **Users & roles** (admin-only): create user (bcrypt), `UserRoleSelect`, delete (not self). **Activity log** viewer (read-only).
+- Installed `@tiptap/react @tiptap/starter-kit @tiptap/pm` (v3.27). Verified: `tsc` clean · `next build` green (all studio routes) · `eslint` clean.
+- **Admin CMS now complete (Phases 4–5).** Live use needs deployed DB/Blob.
+
 ---
 
 ## 2. Pending Features (by phase)
 
-- **Phase 5** — Blog (Tiptap), Portfolio, Inquiries/WhatsApp Orders + status workflow, Testimonials, FAQs, SEO mgmt, Site Settings, User Roles, Activity Logs.
 - **Phase 6** — Public: Home (all sections), About, Process, FAQ, Contact (map + form→Inquiry + optional Resend), Privacy, Terms.
 - **Phase 7** — Shop (filters/sort/search/infinite scroll/quick view), Category pages, Product Detail (gallery/video/model-viewer/dynamic form/reference upload/live preview/save-then-redirect), Custom Order, WhatsApp Order fallback page.
 - **Phase 8** — Public Portfolio (case studies, before/after, lightbox), Blog listing + detail, Instagram gallery, Search.
@@ -237,13 +247,19 @@ styles/
 - UI primitives: `Input`, `Textarea`, `Label`, `Select`, `Card`(+`Header`/`Title`/`Content`), `Badge`.
 - Pages: `/studio/login`, `/studio` (dashboard), `/studio/products` (+ `/new`, `/[id]/edit`), `/studio/categories` (+ `/[id]/edit`), `/studio/media`. App split into `(public)` group + `studio`.
 
+**Studio admin — Phase 5**
+- Actions: `blog` (saveBlogPost/deleteBlogPost/saveBlogCategory/deleteBlogCategory), `portfolio`, `inquiries` (updateInquiryStatus/deleteInquiry), `testimonials`, `faqs`, `settings` (saveSettings), `users` (createUser/updateUserRole/deleteUser, admin-only).
+- Client components: `TiptapEditor`, `BlogPostForm`, `BlogCategoryForm`, `PortfolioForm`, `ResultsMetaBuilder`, `SingleImagePicker`, `TestimonialForm`, `FaqForm`, `SettingsForm`, `InquiryStatusSelect`, `UserForm`, `UserRoleSelect`.
+- Pages: `/studio/blog` (+new,[id]/edit), `/studio/portfolio` (+new,[id]/edit), `/studio/inquiries` (+[id]), `/studio/testimonials` (+[id]/edit), `/studio/faqs` (+[id]/edit), `/studio/settings`, `/studio/users`, `/studio/activity`.
+- Deps: `@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/pm` (v3.27).
+
 ---
 
 ## 9. Current Progress
 
-- Phases 1–4 complete. Full admin core (login, dashboard, Products + Categories CRUD, Media Library) builds clean; deploy auto-inits the DB.
-- Live admin requires the deployed Neon DB + Blob (sandbox egress blocks both — code is build-verified only here).
-- Pending owner actions: deploy to Vercel (auto-migrate + seed), set Vercel env (incl. generated `AUTH_SECRET`), connect domain; flip default branch to `main` in GitHub UI.
+- Phases 1–5 complete. **Full custom admin CMS** (`/studio`) builds clean: dashboard, Products, Categories, Portfolio, Blog (Tiptap), Inquiries+status, Media, Testimonials, FAQs, Settings, Users, Activity.
+- Owner has set all Vercel env vars; production deploy auto-migrates + seeds (non-fatal bootstrap). Live admin works once deployed.
+- Public site is still the Phase-2 placeholder home + chrome (real public pages = Phase 6). Default-branch flip to `main` + domain still owner's to confirm.
 
 ---
 
@@ -279,15 +295,12 @@ NEXT_PUBLIC_SITE_URL=https://shop.bhavyagondaliya.co.in
 
 ## 12. EXACT Next Phase + Next Tasks
 
-### ▶ Phase 5 — Admin Rest — DO NOT START WITHOUT PERMISSION
+### ▶ Phase 6 — Public Core Pages — DO NOT START WITHOUT PERMISSION
 
-1. **Blog admin:** posts CRUD with **Tiptap** editor (install `@tiptap/react @tiptap/starter-kit @tiptap/pm`), content stored as Tiptap JSON; blog categories + tags, SEO, draft/publish + `publishedAt`. Reuse `ImageUploader` for cover images.
-2. **Portfolio admin:** CRUD + gallery, before/after images, video, `resultsMeta` case-study fields, status.
-3. **Inquiries / WhatsApp Orders:** list + detail + status workflow (NEW→CONTACTED→CONFIRMED→DELIVERED) via a status Server Action.
-4. **Testimonials**, **FAQs** CRUD (ordering). **SEO Management** (defaults via `SiteSettings.defaultSeo`). **Site Settings** form (brand/hero/announcement/contact/socials). **User Roles** (ADMIN/EDITOR) + **Activity Logs** viewer.
-5. Extend `StudioSidebar` with the new sections. Reuse Phase 4 patterns (Server Actions + `useActionState` forms + Blob uploads + `DeleteButton`). Expand `ADMIN_GUIDE.md`.
-6. `npm run build` check, update CONTEXT.md, commit, push, STOP.
+1. **Home** (replace Phase-2 placeholder; DB-driven via server components): luxury hero (video bg + mouse tracking), brand story, featured products, how-it-works 01–04, why-ResinRiva pillars, portfolio highlights, testimonials carousel (named reviewers + ratings), blog highlights, Instagram gallery, animated stat counters, text marquee, WhatsApp CTA band.
+2. **About**, **Process**, **FAQ** (DB faqs accordion), **Contact** (Google Maps embed + form → `Inquiry` source=CONTACT + optional Resend), **Privacy**, **Terms**.
+3. Make **Header / Footer / AnnouncementBar DB-driven** from `SiteSettings` (currently static `siteConfig` fallback) — read settings in a server component and pass down.
+4. Reusable section components in `src/components/sections/`. Keep motion gated behind reduced-motion; use `next/image` + the placeholder hosts.
+5. `npm run build` check, update CONTEXT.md, commit, push, STOP.
 
-**Note:** same egress caveat — live testing needs the deployed DB/Blob. Build-verify locally with dummy env.
-
-**Reminder:** owner actions still pending — deploy to Vercel (auto-migrate+seed), set Vercel env incl. `AUTH_SECRET`, connect domain, flip default branch to `main` (see §10).
+**Note:** Product detail + shop + order flow = Phase 7; portfolio/blog public detail + search = Phase 8. Build-verify with dummy env (DB queries run at runtime on Vercel).
