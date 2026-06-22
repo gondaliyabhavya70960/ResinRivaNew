@@ -1,0 +1,305 @@
+// ResinRiva — Prisma schema (Phase 3)
+// Postgres (Neon via Vercel Marketplace). Run: prisma migrate dev && prisma db seed
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ──────────────────────────────────────────────────────────────
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum FieldType {
+  SELECT
+  TEXT
+  SWATCH
+  SIZE
+  NUMBER
+  FILE
+}
+
+enum InquirySource {
+  PRODUCT
+  CUSTOM_ORDER
+  CONTACT
+}
+
+enum InquiryStatus {
+  NEW
+  CONTACTED
+  CONFIRMED
+  DELIVERED
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+  MODEL3D
+}
+
+// ─── Auth / users ───────────────────────────────────────────────────────
+model User {
+  id             String        @id @default(cuid())
+  name           String?
+  email          String        @unique
+  hashedPassword String
+  role           Role          @default(ADMIN)
+  createdAt      DateTime      @default(now())
+  activityLogs   ActivityLog[]
+}
+
+// ─── Catalog ────────────────────────────────────────────────────────────
+model Category {
+  id          String      @id @default(cuid())
+  name        String
+  slug        String      @unique
+  image       String?
+  description String?
+  order       Int         @default(0)
+  createdAt   DateTime    @default(now())
+  products    Product[]
+  portfolios  Portfolio[]
+}
+
+model Product {
+  id             String               @id @default(cuid())
+  title          String
+  slug           String               @unique
+  shortTagline   String?
+  description    String               @db.Text
+  priceMin       Int?
+  priceMax       Int?
+  showPrice      Boolean              @default(true)
+  timeline       String?
+  materials      String?
+  dimensions     String?
+  status         ProductStatus        @default(DRAFT)
+  featured       Boolean              @default(false)
+  videoUrl       String?
+  model3dUrl     String?
+  categoryId     String?
+  category       Category?            @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  seoTitle       String?
+  seoDescription String?
+  ogImage        String?
+  images         ProductImage[]
+  customFields   CustomizationField[]
+  inquiries      Inquiry[]
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([featured])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  url       String
+  alt       String?
+  order     Int     @default(0)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
+
+model CustomizationField {
+  id        String    @id @default(cuid())
+  productId String
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  label     String
+  type      FieldType
+  options   Json?
+  required  Boolean   @default(false)
+  helpText  String?
+  order     Int       @default(0)
+
+  @@index([productId])
+}
+
+// ─── Inquiries / WhatsApp orders ────────────────────────────────────────
+model Inquiry {
+  id                 String        @id @default(cuid())
+  source             InquirySource
+  productId          String?
+  product            Product?      @relation(fields: [productId], references: [id], onDelete: SetNull)
+  customerName       String
+  phone              String
+  email              String?
+  selections         Json?
+  referenceImageUrls Json?
+  budgetRange        String?
+  timeline           String?
+  notes              String?       @db.Text
+  whatsappMessage    String        @db.Text
+  status             InquiryStatus @default(NEW)
+  createdAt          DateTime      @default(now())
+
+  @@index([status])
+  @@index([source])
+  @@index([createdAt])
+}
+
+// ─── Portfolio ──────────────────────────────────────────────────────────
+model Portfolio {
+  id             String           @id @default(cuid())
+  title          String
+  slug           String           @unique
+  story          String?          @db.Text
+  beforeImageUrl String?
+  afterImageUrl  String?
+  videoUrl       String?
+  resultsMeta    Json?
+  categoryId     String?
+  category       Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  status         ContentStatus    @default(DRAFT)
+  images         PortfolioImage[]
+  createdAt      DateTime         @default(now())
+
+  @@index([categoryId])
+  @@index([status])
+}
+
+model PortfolioImage {
+  id          String    @id @default(cuid())
+  url         String
+  alt         String?
+  order       Int       @default(0)
+  portfolioId String
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@index([portfolioId])
+}
+
+// ─── Blog ───────────────────────────────────────────────────────────────
+model BlogPost {
+  id             String        @id @default(cuid())
+  title          String
+  slug           String        @unique
+  excerpt        String?
+  content        Json
+  coverImage     String?
+  authorName     String?
+  blogCategoryId String?
+  blogCategory   BlogCategory? @relation(fields: [blogCategoryId], references: [id], onDelete: SetNull)
+  status         ContentStatus @default(DRAFT)
+  publishedAt    DateTime?
+  seoTitle       String?
+  seoDescription String?
+  tags           BlogPostTag[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([blogCategoryId])
+  @@index([status])
+  @@index([publishedAt])
+}
+
+model BlogCategory {
+  id    String     @id @default(cuid())
+  name  String
+  slug  String     @unique
+  posts BlogPost[]
+}
+
+model Tag {
+  id    String        @id @default(cuid())
+  name  String
+  slug  String        @unique
+  posts BlogPostTag[]
+}
+
+model BlogPostTag {
+  postId String
+  tagId  String
+  post   BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@index([tagId])
+}
+
+// ─── Testimonials / FAQ ─────────────────────────────────────────────────
+model Testimonial {
+  id        String  @id @default(cuid())
+  name      String
+  location  String?
+  quote     String  @db.Text
+  rating    Int     @default(5)
+  avatarUrl String?
+  order     Int     @default(0)
+}
+
+model Faq {
+  id       String @id @default(cuid())
+  question String
+  answer   String @db.Text
+  order    Int    @default(0)
+}
+
+// ─── Media (Vercel Blob) ────────────────────────────────────────────────
+model Media {
+  id        String    @id @default(cuid())
+  url       String
+  pathname  String    @unique
+  type      MediaType
+  folder    String?
+  bytes     Int?
+  width     Int?
+  height    Int?
+  createdAt DateTime  @default(now())
+
+  @@index([folder])
+  @@index([type])
+}
+
+// ─── Site settings (singleton) ──────────────────────────────────────────
+model SiteSettings {
+  id             String   @id @default("singleton")
+  brandName      String   @default("ResinRiva")
+  tagline        String?
+  logoUrl        String?
+  heroVideoUrl   String?
+  announcement   String?
+  phone          String?
+  whatsappNumber String?
+  email          String?
+  mapsUrl        String?
+  address        String?
+  socials        Json?
+  defaultSeo     Json?
+  updatedAt      DateTime @updatedAt
+}
+
+// ─── Activity log ───────────────────────────────────────────────────────
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
