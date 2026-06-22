@@ -9,13 +9,13 @@
 
 | Item | Value |
 | --- | --- |
-| Current Phase | **Phase 3 — Database + Auth** ✅ CODE COMPLETE (migrate/seed pending DB credentials) |
-| Next Phase | **Phase 4 — Admin Core** (awaiting permission) |
+| Current Phase | **Phase 4 — Admin Core** ✅ COMPLETE (code; live admin needs deployed DB/Blob) |
+| Next Phase | **Phase 5 — Admin Rest** (awaiting permission) |
 | Branch | `claude/epic-bell-dof5as` (all phases develop here → PR to `main`) |
 | Default branch | ⚠ still `claude/epic-bell-dof5as` — change to `main` in GitHub UI (Settings → General); no MCP/API tool exposes this setting |
-| PRs | #1 (P1) merged · #2 (auto-sync) merged · #3 (P2) merged · #4 (P3) open |
+| PRs | #1–3 merged · #4 (P3) merged · #5 (auto-sync) merged · #6 (deploy-wiring + P4) open |
 | Repo | https://github.com/gondaliyabhavya70960/ResinRivaNew.git |
-| Last updated | Phase 3 |
+| Last updated | Phase 4 |
 
 ---
 
@@ -58,11 +58,21 @@
 - **Verified:** `tsc` clean · `next build` green (auth route + proxy registered, no deprecation) · `eslint` clean.
 - **PENDING (owner):** provision Neon + Blob in Vercel → `vercel link` → env pull → `npm run db:deploy` (or `db:migrate`) + `npm run db:seed`. `/studio/login` UI is Phase 4.
 
+### ✅ Phase 4 — Admin Core
+- **Restructured** app into a `(public)` route group (Header/Footer/Lenis/Preloader chrome) + slim root layout; home moved to `(public)/page.tsx`. Studio has its own chrome (no public header/footer).
+- **Auth UI + guard:** `/studio/login` (Credentials `signIn`); `studio/(panel)/layout.tsx` server-guarded via `requireUser()` with sidebar + topbar + sign-out. `proxy.ts` already gates `/studio/*`.
+- **Dashboard** (`studio/(panel)/page.tsx`): product / category / inquiry-7d / post counts + recent inquiries + quick links.
+- **Products CRUD:** list (table, status/featured badges, price), new/edit pages, `ProductForm` (basics, pricing, gallery, customization, SEO) with **Blob `ImageUploader`** (client upload → `/api/upload`) + **`CustomizationFieldBuilder`** (dynamic fields → JSON hidden inputs → Server Action). Actions `saveProduct`/`deleteProduct`/`toggleProductStatus`.
+- **Categories CRUD:** list + inline new form + edit page; `saveCategory`/`deleteCategory`.
+- **Media Library:** Blob-backed grid + `MediaUploader`; delete removes Blob + `Media` row. Actions `recordMedia`/`deleteMedia`.
+- **Infra:** `/api/upload` Blob `handleUpload` (admin session required; `refs/` prefix anonymous for Phase 7); `src/lib/{auth-helpers,blob}.ts`; `src/lib/validations/studio.ts` (zod, `slugify`); `src/actions/{state,categories,products,media}.ts`; UI primitives `input/textarea/label/select/card/badge`.
+- All studio pages `force-dynamic` (no DB hit at build). Verified: `tsc` clean · `next build` green · `eslint` clean.
+- **Note:** live admin needs the deployed DB + Blob (sandbox egress blocks them). Remaining admin (Blog/Portfolio/Inquiries/Testimonials/FAQ/SEO/Settings/Users/Activity) = Phase 5.
+
 ---
 
 ## 2. Pending Features (by phase)
 
-- **Phase 4** — `/studio` layout + login + dashboard; Products CRUD w/ Blob gallery upload + Custom Form Builder; Categories CRUD; Media Library.
 - **Phase 5** — Blog (Tiptap), Portfolio, Inquiries/WhatsApp Orders + status workflow, Testimonials, FAQs, SEO mgmt, Site Settings, User Roles, Activity Logs.
 - **Phase 6** — Public: Home (all sections), About, Process, FAQ, Contact (map + form→Inquiry + optional Resend), Privacy, Terms.
 - **Phase 7** — Shop (filters/sort/search/infinite scroll/quick view), Category pages, Product Detail (gallery/video/model-viewer/dynamic form/reference upload/live preview/save-then-redirect), Custom Order, WhatsApp Order fallback page.
@@ -177,7 +187,8 @@ styles/
 ## 7. API Endpoints & Server Actions
 
 - ✅ `app/api/auth/[...nextauth]` — Auth.js v5 handler (GET/POST). **Built (Phase 3).**
-- `app/api/upload/route.ts` — Vercel Blob `handleUpload` for client uploads (Phase 4 admin media / Phase 7 reference images).
+- ✅ `app/api/upload/route.ts` — Vercel Blob `handleUpload`. **Built (Phase 4)** — admin uploads require a session; `refs/` prefix anonymous (Phase 7).
+- Server Actions **built (Phase 4):** `saveCategory/deleteCategory`, `saveProduct/deleteProduct/toggleProductStatus`, `recordMedia/deleteMedia` (in `src/actions/`).
 - `app/api/search/route.ts` — Postgres search across products/posts/portfolio (Phase 8).
 - Server Actions (planned): product CRUD, category CRUD, portfolio CRUD, blog CRUD, inquiry create + status update, testimonials/FAQs/settings CRUD, contact submit, `createInquiry` (order flow).
 
@@ -220,13 +231,19 @@ styles/
 - `proxy` (default export) — Next 16 proxy gating `/studio/*` (matcher). *(proxy.ts)*
 - Route: `GET/POST /api/auth/[...nextauth]`. Session augmented with `id` + `role`.
 
+**Studio admin — Phase 4** (`src/components/studio`, `src/actions`, `src/app/studio`)
+- Helpers: `getSessionUser/requireUser/requireAdmin/logActivity` (`lib/auth-helpers`), `listBlobs/deleteBlobByUrl/mediaTypeFor` (`lib/blob`), zod + `slugify` (`lib/validations/studio`).
+- Client components: `StudioSidebar`, `SignOutButton`, `CategoryForm`, `ProductForm`, `ImageUploader` (type `GalleryImage`), `CustomizationFieldBuilder` (type `CustomField`), `MediaUploader`, `DeleteButton`, `FieldError`.
+- UI primitives: `Input`, `Textarea`, `Label`, `Select`, `Card`(+`Header`/`Title`/`Content`), `Badge`.
+- Pages: `/studio/login`, `/studio` (dashboard), `/studio/products` (+ `/new`, `/[id]/edit`), `/studio/categories` (+ `/[id]/edit`), `/studio/media`. App split into `(public)` group + `studio`.
+
 ---
 
 ## 9. Current Progress
 
-- Phases 1–3 complete (Phase 3 = code; DB migrate/seed awaits Neon credentials).
-- App builds with full DB schema, generated Prisma client, and Auth.js wired. `/studio/*` is protected by `proxy.ts` (no `/studio` pages exist yet → Phase 4).
-- Pending owner actions: provision Neon + Blob, `vercel link`, env pull, run migrate + seed; flip default branch to `main` in GitHub UI.
+- Phases 1–4 complete. Full admin core (login, dashboard, Products + Categories CRUD, Media Library) builds clean; deploy auto-inits the DB.
+- Live admin requires the deployed Neon DB + Blob (sandbox egress blocks both — code is build-verified only here).
+- Pending owner actions: deploy to Vercel (auto-migrate + seed), set Vercel env (incl. generated `AUTH_SECRET`), connect domain; flip default branch to `main` in GitHub UI.
 
 ---
 
@@ -236,7 +253,7 @@ styles/
 - `public/` is currently empty (default Next/Vercel SVGs removed); real logo/og/poster assets added later. Favicon is `src/app/favicon.ico` (App Router convention).
 - `LiquidGlass` renders its SVG displacement filter per refracting instance (duplicate `#rr-glass` id) — harmless; dedupe to a single global def in Phase 9.
 - Socials (Instagram/Facebook) are placeholder `#` links until set in Site Settings (Phase 5).
-- DB **migrate + seed not yet run** — no `DATABASE_URL` in session. Owner runs `npm run db:deploy && npm run db:seed` once Neon is connected. Seed uses a dev default `ADMIN_PASSWORD` if unset (it warns).
+- **DB migrate/seed run automatically on Vercel deploy** via `vercel-build` → `node scripts/db-bootstrap.mjs && next build` (bootstrap is **non-fatal** — best-effort migrate+seed, never breaks the build; the first Vercel deploy with the strict `migrate && seed && build` chain FAILED, hence the resilient wrapper). Neon `channel_binding` stripped in `db.ts`/`seed.ts`. Sandbox egress **allowlist blocks Neon + Blob** (403), so they can't run here. Seed first-run-guarded (`SEED_FORCE=1`). Manual: `npm run db:deploy && npm run db:seed` from open-egress machine.
 - **Default branch** is still `claude/epic-bell-dof5as`; switch to `main` via GitHub UI (no MCP/API tool for this repo setting).
 - Prisma CLI reads `.env` (not `.env.local`). After `vercel env pull .env.local`, also expose `DATABASE_URL` to the CLI (e.g. `cp .env.local .env`).
 
@@ -256,19 +273,21 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=917096036250
 NEXT_PUBLIC_SITE_URL=https://shop.bhavyagondaliya.co.in
 ```
 
+**Connection status (Phase 3.x):** Live **Neon** + **Blob** creds are in `.env.local`/`.env` (git-ignored, never committed). Schema `datasource` now has `url=DATABASE_URL` (pooled) + `directUrl=DATABASE_URL_UNPOOLED` (direct, for migrations). A fresh `AUTH_SECRET` was generated into `.env.local`. **Owner must add to Vercel env:** `AUTH_SECRET`, `AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `NEXT_PUBLIC_*` (Neon + Blob vars auto-inject). DB initialises on first Vercel deploy.
+
 ---
 
 ## 12. EXACT Next Phase + Next Tasks
 
-### ▶ Phase 4 — Admin Core — DO NOT START WITHOUT PERMISSION
+### ▶ Phase 5 — Admin Rest — DO NOT START WITHOUT PERMISSION
 
-1. `/studio` layout (sidebar nav + signed-in guard via `auth()`), `/studio/login` page (Credentials form → `signIn`), `/studio` dashboard (counts: products, inquiries this week, posts; recent inquiries; quick links).
-2. Add shadcn/ui pieces as needed (`npx shadcn@latest add input label form table dialog dropdown-menu select textarea badge card sonner tabs`) — Button is already custom.
-3. Server Actions in `src/actions`: product CRUD (slug + draft/publish), category CRUD; Zod validation + `revalidatePath` + `ActivityLog` writes; role-guarded via `auth()`.
-4. Products admin: list/table, create/edit form, gallery upload to **Vercel Blob** (client upload via `app/api/upload/route.ts` `handleUpload`), **Custom Form Builder** for `CustomizationField` (label/type/options/required/help/order).
-5. Categories admin: CRUD + ordering. Media Library: Blob `list`/upload/delete by `pathname`, persisted to `Media`.
+1. **Blog admin:** posts CRUD with **Tiptap** editor (install `@tiptap/react @tiptap/starter-kit @tiptap/pm`), content stored as Tiptap JSON; blog categories + tags, SEO, draft/publish + `publishedAt`. Reuse `ImageUploader` for cover images.
+2. **Portfolio admin:** CRUD + gallery, before/after images, video, `resultsMeta` case-study fields, status.
+3. **Inquiries / WhatsApp Orders:** list + detail + status workflow (NEW→CONTACTED→CONFIRMED→DELIVERED) via a status Server Action.
+4. **Testimonials**, **FAQs** CRUD (ordering). **SEO Management** (defaults via `SiteSettings.defaultSeo`). **Site Settings** form (brand/hero/announcement/contact/socials). **User Roles** (ADMIN/EDITOR) + **Activity Logs** viewer.
+5. Extend `StudioSidebar` with the new sections. Reuse Phase 4 patterns (Server Actions + `useActionState` forms + Blob uploads + `DeleteButton`). Expand `ADMIN_GUIDE.md`.
 6. `npm run build` check, update CONTEXT.md, commit, push, STOP.
 
-**Note:** live admin testing needs the connected Blob store + DB (migrate/seed run). If env is still absent, build the UI + Server Actions and document that runtime testing requires the connected stores. Keep secrets out of git.
+**Note:** same egress caveat — live testing needs the deployed DB/Blob. Build-verify locally with dummy env.
 
-**Reminder for next session:** the DB migrate + seed and the default-branch flip to `main` are still pending owner actions (see §10).
+**Reminder:** owner actions still pending — deploy to Vercel (auto-migrate+seed), set Vercel env incl. `AUTH_SECRET`, connect domain, flip default branch to `main` (see §10).

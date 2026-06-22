@@ -1,7 +1,9 @@
 import { PrismaClient, type Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+// Strip Neon's `channel_binding` (Prisma can reject it); TLS stays via sslmode.
+const dbUrl = process.env.DATABASE_URL?.replace(/channel_binding=[^&]*&?/gi, "").replace(/[?&]$/, "");
+const prisma = new PrismaClient(dbUrl ? { datasourceUrl: dbUrl } : undefined);
 
 // Placeholder images via picsum (always render). Replaced with real ResinRiva
 // photos before launch — alt text is tagged "placeholder".
@@ -278,6 +280,14 @@ const posts = [
 ];
 
 async function main() {
+  // First-run guard: skip if the DB is already initialised so redeploys don't
+  // overwrite admin edits. Set SEED_FORCE=1 to re-run (e.g. Phase 11 bulk seed).
+  const force = process.env.SEED_FORCE === "1";
+  if (!force && (await prisma.user.count()) > 0) {
+    console.log("ℹ  Seed skipped — database already initialised (SEED_FORCE=1 to re-run).");
+    return;
+  }
+
   // Site settings (singleton)
   await prisma.siteSettings.upsert({
     where: { id: "singleton" },
