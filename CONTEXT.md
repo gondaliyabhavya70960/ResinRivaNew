@@ -9,13 +9,13 @@
 
 | Item | Value |
 | --- | --- |
-| Current Phase | **Phase 5 — Admin Rest** ✅ COMPLETE (full admin CMS; live needs deployed DB/Blob) |
-| Next Phase | **Phase 6 — Public Core Pages** (awaiting permission) |
+| Current Phase | **Phase 6 — Public Core Pages** ✅ COMPLETE |
+| Next Phase | **Phase 7 — Shop + Order Flow** (awaiting permission) |
 | Branch | `claude/epic-bell-dof5as` (all phases develop here → PR to `main`) |
 | Env | Owner set all Vercel env vars ✅ · DB auto-inits on deploy (non-fatal bootstrap) |
-| PRs | #1–6 merged (P1–P4 + wiring) · #7 (P5) open |
+| PRs | #1–7 merged (P1–P5 + wiring) · #8 (P6) open |
 | Repo | https://github.com/gondaliyabhavya70960/ResinRivaNew.git |
-| Last updated | Phase 5 |
+| Last updated | Phase 6 |
 
 ---
 
@@ -80,11 +80,19 @@
 - Installed `@tiptap/react @tiptap/starter-kit @tiptap/pm` (v3.27). Verified: `tsc` clean · `next build` green (all studio routes) · `eslint` clean.
 - **Admin CMS now complete (Phases 4–5).** Live use needs deployed DB/Blob.
 
+### ✅ Phase 6 — Public Core Pages
+- **Data layer** `src/lib/queries.ts`: cached (`react.cache`), resilient (try/catch → empty) reads — `getSiteData` (SiteSettings merged w/ `siteConfig` fallback), `getFeaturedProducts`, `getTestimonials`, `getBlogHighlights`, `getPortfolioHighlights`, `getFaqs`, `getHomeStats`.
+- **Home** (`(public)/page.tsx`, replaces Phase-2 placeholder): Hero (video bg + mouse parallax), brand story, marquee, featured products, how-it-works 01–04, why-pillars, portfolio highlights, stat counters (count-up), testimonials carousel, blog highlights, Instagram grid, WhatsApp CTA.
+- **Pages:** About, Process, FAQ (DB accordion), **Contact** (Google Maps embed + `ContactForm` → `submitContact` saving `Inquiry` source=CONTACT + contact details + FAQs), Privacy, Terms — each with metadata.
+- **Sections** (`src/components/sections/`): `Hero`, `StatCounters`, `Marquee`, `TestimonialsCarousel`, `FaqAccordion`, `ContactForm`; `ProductCard` (`components/product`, hover 2nd image, `priceLabel`).
+- **Header/Footer/AnnouncementBar are now DB-driven** from `SiteSettings` via `getSiteData()` in the `(public)` layout (`force-dynamic`). `Footer`/`AnnouncementBar` take props; `Header` unchanged.
+- `@keyframes marquee` added to globals.css; all motion reduced-motion-gated. Verified: `tsc`/`next build`/`eslint` clean. All `(public)` pages are dynamic (layout fetches settings).
+- **Note:** links to `/shop`, `/product/[slug]`, `/portfolio/[slug]`, `/blog/[slug]`, `/custom-order` resolve in Phases 7–8.
+
 ---
 
 ## 2. Pending Features (by phase)
 
-- **Phase 6** — Public: Home (all sections), About, Process, FAQ, Contact (map + form→Inquiry + optional Resend), Privacy, Terms.
 - **Phase 7** — Shop (filters/sort/search/infinite scroll/quick view), Category pages, Product Detail (gallery/video/model-viewer/dynamic form/reference upload/live preview/save-then-redirect), Custom Order, WhatsApp Order fallback page.
 - **Phase 8** — Public Portfolio (case studies, before/after, lightbox), Blog listing + detail, Instagram gallery, Search.
 - **Phase 9** — Motion polish (mouse tracking, GSAP scroll, counters, marquee, cursor glow, page transitions, refraction + Safari fallback, reduced-motion audit, perf/INP pass).
@@ -198,7 +206,7 @@ styles/
 
 - ✅ `app/api/auth/[...nextauth]` — Auth.js v5 handler (GET/POST). **Built (Phase 3).**
 - ✅ `app/api/upload/route.ts` — Vercel Blob `handleUpload`. **Built (Phase 4)** — admin uploads require a session; `refs/` prefix anonymous (Phase 7).
-- Server Actions **built (Phase 4):** `saveCategory/deleteCategory`, `saveProduct/deleteProduct/toggleProductStatus`, `recordMedia/deleteMedia` (in `src/actions/`).
+- Server Actions **built:** categories/products/media (P4); blog/portfolio/inquiries/testimonials/faqs/settings/users (P5); `submitContact` → CONTACT `Inquiry` (P6). All in `src/actions/`. Public reads in `src/lib/queries.ts` (P6).
 - `app/api/search/route.ts` — Postgres search across products/posts/portfolio (Phase 8).
 - Server Actions (planned): product CRUD, category CRUD, portfolio CRUD, blog CRUD, inquiry create + status update, testimonials/FAQs/settings CRUD, contact submit, `createInquiry` (order flow).
 
@@ -257,9 +265,9 @@ styles/
 
 ## 9. Current Progress
 
-- Phases 1–5 complete. **Full custom admin CMS** (`/studio`) builds clean: dashboard, Products, Categories, Portfolio, Blog (Tiptap), Inquiries+status, Media, Testimonials, FAQs, Settings, Users, Activity.
-- Owner has set all Vercel env vars; production deploy auto-migrates + seeds (non-fatal bootstrap). Live admin works once deployed.
-- Public site is still the Phase-2 placeholder home + chrome (real public pages = Phase 6). Default-branch flip to `main` + domain still owner's to confirm.
+- Phases 1–6 complete. Full admin CMS (`/studio`) **plus** the public core: real DB-driven Home, About, Process, FAQ, Contact, Privacy, Terms; chrome wired to SiteSettings.
+- Owner set all Vercel env vars; production deploy auto-migrates + seeds. Public pages are `force-dynamic` (read DB at runtime).
+- Remaining public: shop + product detail + order flow (Phase 7); portfolio/blog detail + search (Phase 8). Default-branch flip to `main` + domain still owner's to confirm.
 
 ---
 
@@ -295,12 +303,13 @@ NEXT_PUBLIC_SITE_URL=https://shop.bhavyagondaliya.co.in
 
 ## 12. EXACT Next Phase + Next Tasks
 
-### ▶ Phase 6 — Public Core Pages — DO NOT START WITHOUT PERMISSION
+### ▶ Phase 7 — Shop + Order Flow — DO NOT START WITHOUT PERMISSION
 
-1. **Home** (replace Phase-2 placeholder; DB-driven via server components): luxury hero (video bg + mouse tracking), brand story, featured products, how-it-works 01–04, why-ResinRiva pillars, portfolio highlights, testimonials carousel (named reviewers + ratings), blog highlights, Instagram gallery, animated stat counters, text marquee, WhatsApp CTA band.
-2. **About**, **Process**, **FAQ** (DB faqs accordion), **Contact** (Google Maps embed + form → `Inquiry` source=CONTACT + optional Resend), **Privacy**, **Terms**.
-3. Make **Header / Footer / AnnouncementBar DB-driven** from `SiteSettings` (currently static `siteConfig` fallback) — read settings in a server component and pass down.
-4. Reusable section components in `src/components/sections/`. Keep motion gated behind reduced-motion; use `next/image` + the placeholder hosts.
-5. `npm run build` check, update CONTEXT.md, commit, push, STOP.
+1. **Shop** `/shop`: product grid + filters (category, price/featured), search, sort, load-more / infinite scroll, quick view; **category pages** `/shop/[category]`. Variant chips on cards. Reuse `ProductCard`.
+2. **Product detail** `/product/[slug]`: gallery (zoom/lightbox, hover 2nd image), video, **model-viewer** (GLB/USDZ via `@google/model-viewer`), **dynamic customization form** rendered from `CustomizationField`s, **reference-image client-upload to Blob** (`refs/` prefix), customer details, **LIVE WhatsApp message preview**, **Place Order → save `Inquiry` (source PRODUCT) → redirect to `wa.me`**. Related products.
+3. **Custom Order** `/custom-order`: large requirement form, reference upload, budget/timeline → save `Inquiry` (CUSTOM_ORDER) + WhatsApp.
+4. **WhatsApp Order** fallback `/whatsapp-order`: summary + "Open WhatsApp" button (for blocked auto-redirect).
+5. Expand `src/lib/whatsapp.ts` with the **structured message builder** (product, selections, ref URLs, customer block) per the WHATSAPP_ORDER_GUIDE format. New `createInquiry` Server Action.
+6. `npm run build` check, update CONTEXT.md, commit, push, STOP.
 
-**Note:** Product detail + shop + order flow = Phase 7; portfolio/blog public detail + search = Phase 8. Build-verify with dummy env (DB queries run at runtime on Vercel).
+**Order flow (exact):** validate (Zod) → client-upload refs to Blob → Server Action saves `Inquiry` (incl. final `whatsappMessage`) → `window.open` the `wa.me` URL. Show the live preview before Place Order.

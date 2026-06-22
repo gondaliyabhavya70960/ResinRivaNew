@@ -1,12 +1,12 @@
-import { siteConfig } from "@/lib/site";
 import { waLink, defaultEnquiry } from "@/lib/whatsapp";
 
-/** Slim top announcement bar (static for Phase 2; DB-driven from Phase 5). */
-export function AnnouncementBar() {
+/** Slim top announcement bar (DB-driven via SiteSettings). */
+export function AnnouncementBar({ announcement }: { announcement: string }) {
+  if (!announcement) return null;
   return (
     <div className="bg-ink px-4 py-2 text-center text-xs tracking-wide text-ivory/90 sm:text-[13px]">
       <span>
-        {siteConfig.announcement}{" "}
+        {announcement}{" "}
         <a
           href={waLink(defaultEnquiry)}
           target="_blank"

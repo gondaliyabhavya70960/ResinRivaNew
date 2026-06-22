@@ -1,34 +1,30 @@
 import Link from "next/link";
-import { ArrowRight, MessageCircle, Star, Hand, Gem, Crown } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, MessageCircle, Hand, Gem, Crown } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
-import { LiquidGlass } from "@/components/motion/liquid-glass";
-import { MouseParallax } from "@/components/motion/mouse-parallax";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import { Hero } from "@/components/sections/hero";
+import { StatCounters } from "@/components/sections/stat-counters";
+import { Marquee } from "@/components/sections/marquee";
+import { TestimonialsCarousel } from "@/components/sections/testimonials-carousel";
+import { ProductCard } from "@/components/product/product-card";
 import { waLink, defaultEnquiry } from "@/lib/whatsapp";
+import {
+  getSiteData,
+  getFeaturedProducts,
+  getTestimonials,
+  getBlogHighlights,
+  getPortfolioHighlights,
+} from "@/lib/queries";
 
-/**
- * Phase 2 placeholder home — demonstrates the design system & primitives.
- * The full, DB-driven home (all sections) is built in Phase 6.
- */
+export const dynamic = "force-dynamic";
 
 const pillars = [
-  {
-    icon: Hand,
-    title: "Handcrafted",
-    body: "Every piece is poured, cured and finished by hand in small batches — never mass-produced.",
-  },
-  {
-    icon: Gem,
-    title: "Bespoke",
-    body: "Colours, scale, engraving and finish are tailored to you. Your brief becomes a one-of-a-kind object.",
-  },
-  {
-    icon: Crown,
-    title: "Heirloom-quality",
-    body: "Museum-grade materials and a flawless gloss, made to be kept and passed on for generations.",
-  },
+  { icon: Hand, title: "Handcrafted", body: "Every piece is poured, cured and finished by hand in small batches — never mass-produced." },
+  { icon: Gem, title: "Bespoke", body: "Colours, scale, engraving and finish are tailored to you. Your brief becomes a one-of-a-kind object." },
+  { icon: Crown, title: "Heirloom-quality", body: "Museum-grade materials and a flawless gloss, made to be kept and passed on for generations." },
 ];
 
 const steps = [
@@ -38,77 +34,111 @@ const steps = [
   { n: "04", title: "We craft & deliver", body: "Handmade to order and shipped with care." },
 ];
 
-export default function Home() {
+const stats = [
+  { label: "Years of craft", value: 6 },
+  { label: "Pieces delivered", value: 500, suffix: "+" },
+  { label: "5-star reviews", value: 120, suffix: "+" },
+  { label: "Cities shipped to", value: 40, suffix: "+" },
+];
+
+export default async function Home() {
+  const [site, featured, testimonials, posts, portfolio] = await Promise.all([
+    getSiteData(),
+    getFeaturedProducts(8),
+    getTestimonials(),
+    getBlogHighlights(3),
+    getPortfolioHighlights(4),
+  ]);
+
   return (
     <>
-      {/* ── Hero ───────────────────────────────────────────── */}
-      <section className="relative isolate overflow-hidden mesh-ink text-ivory">
-        <MouseParallax strength={14} className="relative">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
-          >
-            <div className="absolute -left-16 top-24 size-72 rounded-full bg-ocean/40 blur-3xl" />
-            <div className="absolute right-0 top-8 size-80 rounded-full bg-teal/30 blur-3xl" />
-            <div className="absolute bottom-0 left-1/3 size-72 rounded-full bg-amber/20 blur-3xl" />
+      <Hero videoUrl={site.heroVideoUrl} />
+
+      {/* Brand story */}
+      <Section index="01" eyebrow="the studio" title="An atelier for objects worth keeping.">
+        <div className="grid items-center gap-10 lg:grid-cols-2">
+          <ScrollReveal>
+            <p className="text-lg text-muted-foreground">
+              ResinRiva began with a simple belief — that the moments we treasure deserve to be held
+              in something beautiful. We blend resin artistry with precision 3D printing to craft
+              bespoke art, décor and keepsakes for couples, collectors and brands across India.
+            </p>
+            <p className="mt-4 text-muted-foreground">
+              Each commission is made to order, by hand, with museum-grade materials and a finish
+              that lasts a lifetime.
+            </p>
+            <div className="mt-7 flex gap-3">
+              <Button asChild>
+                <Link href="/about">Our story</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/process">The process</Link>
+              </Button>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal delay={0.1}>
+            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted shadow-[var(--shadow-luxe)]">
+              <Image
+                src="https://picsum.photos/seed/resinriva-studio/900/1125"
+                alt="placeholder — ResinRiva studio"
+                fill
+                sizes="(min-width:1024px) 40vw, 90vw"
+                className="object-cover"
+              />
+            </div>
+          </ScrollReveal>
+        </div>
+      </Section>
+
+      <Marquee
+        items={[
+          "Resin Art",
+          "Custom 3D Printing",
+          "Varmala Preservation",
+          "Wedding Frames",
+          "River Tables",
+          "Bespoke Gifts",
+        ]}
+      />
+
+      {/* Featured products */}
+      {featured.length > 0 && (
+        <Section index="02" eyebrow="collection" title="Featured pieces" description="A glimpse of what we love making most.">
+          <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+            {featured.map((p, i) => (
+              <ScrollReveal key={p.id} delay={(i % 4) * 0.06}>
+                <ProductCard product={p} />
+              </ScrollReveal>
+            ))}
           </div>
+          <div className="mt-10">
+            <Button asChild variant="outline">
+              <Link href="/shop">
+                View the full collection
+                <ArrowRight />
+              </Link>
+            </Button>
+          </div>
+        </Section>
+      )}
 
-          <Container className="relative flex min-h-[86vh] flex-col justify-center py-28">
-            <ScrollReveal className="max-w-3xl">
-              <p className="mb-6 flex items-center gap-3 text-xs uppercase tracking-[0.24em] text-ivory/70">
-                <span className="font-display text-amber-light">·</span>
-                luxury resin art · custom 3d printing
-              </p>
-              <h1 className="font-display text-4xl leading-[1.04] text-balance sm:text-6xl lg:text-7xl">
-                Bespoke <span className="italic text-amber-light">resin</span> art,
-                made to outlast the moment.
-              </h1>
-              <p className="mt-6 max-w-xl text-lg text-ivory/75">
-                Handcrafted keepsakes, wall art, furniture and 3D-printed décor —
-                designed with you and finished to an heirloom standard.
-              </p>
-
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Button asChild variant="gold" size="lg">
-                  <a
-                    href={waLink(defaultEnquiry)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <MessageCircle />
-                    Start your piece on WhatsApp
-                  </a>
-                </Button>
-                <Button asChild variant="glass" size="lg" className="text-ivory">
-                  <Link href="/shop">
-                    Explore the collection
-                    <ArrowRight />
-                  </Link>
-                </Button>
+      {/* How it works */}
+      <Section className="mesh-ivory" index="03" eyebrow="how it works" title="From idea to heirloom.">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {steps.map((s, i) => (
+            <ScrollReveal key={s.n} delay={i * 0.08}>
+              <div className="flex h-full flex-col rounded-2xl border bg-card/70 p-7">
+                <span className="font-display text-3xl text-amber">{s.n}</span>
+                <h3 className="mt-4 font-display text-xl">{s.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{s.body}</p>
               </div>
-
-              <LiquidGlass className="mt-10 inline-flex items-center gap-3 rounded-full px-5 py-2.5 text-sm text-ivory">
-                <span className="flex items-center gap-1 text-gold">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="size-3.5 fill-current" />
-                  ))}
-                </span>
-                <span className="text-ivory/80">
-                  Loved by couples, gift-givers &amp; collectors across India
-                </span>
-              </LiquidGlass>
             </ScrollReveal>
-          </Container>
-        </MouseParallax>
-      </section>
+          ))}
+        </div>
+      </Section>
 
-      {/* ── Why ResinRiva (value pillars) ──────────────────── */}
-      <Section
-        index="01"
-        eyebrow="why resinriva"
-        title="Crafted to be kept."
-        description="Three promises behind every ResinRiva commission."
-      >
+      {/* Why ResinRiva */}
+      <Section index="04" eyebrow="why resinriva" title="Crafted to be kept.">
         <div className="grid gap-6 md:grid-cols-3">
           {pillars.map((p, i) => (
             <ScrollReveal key={p.title} delay={i * 0.08}>
@@ -124,27 +154,106 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* ── How it works ───────────────────────────────────── */}
-      <Section
-        className="mesh-ivory"
-        index="02"
-        eyebrow="how it works"
-        title="From idea to heirloom."
-      >
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {steps.map((s, i) => (
-            <ScrollReveal key={s.n} delay={i * 0.08}>
-              <div className="flex h-full flex-col rounded-2xl border bg-card/70 p-7">
-                <span className="font-display text-3xl text-amber">{s.n}</span>
-                <h3 className="mt-4 font-display text-xl">{s.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{s.body}</p>
-              </div>
-            </ScrollReveal>
+      {/* Portfolio highlights */}
+      {portfolio.length > 0 && (
+        <Section className="mesh-ink text-ivory" eyebrow="portfolio" title="Recent commissions">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {portfolio.map((p) => (
+              <Link key={p.id} href={`/portfolio/${p.slug}`} className="group block">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-ink/40">
+                  {(p.images[0]?.url || p.afterImageUrl) && (
+                    <Image
+                      src={p.images[0]?.url ?? p.afterImageUrl!}
+                      alt={p.title}
+                      fill
+                      sizes="(min-width:1024px) 25vw, 50vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  )}
+                </div>
+                <h3 className="mt-3 font-display text-lg">{p.title}</h3>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-10">
+            <Button asChild variant="glass" className="text-ivory">
+              <Link href="/portfolio">
+                See the portfolio
+                <ArrowRight />
+              </Link>
+            </Button>
+          </div>
+        </Section>
+      )}
+
+      {/* Stats */}
+      <Section>
+        <StatCounters stats={stats} />
+      </Section>
+
+      {/* Testimonials */}
+      {testimonials.length > 0 && (
+        <Section className="mesh-ivory" index="05" eyebrow="loved" title="Words from our clients">
+          <TestimonialsCarousel items={testimonials} />
+        </Section>
+      )}
+
+      {/* Blog highlights */}
+      {posts.length > 0 && (
+        <Section index="06" eyebrow="journal" title="From the journal">
+          <div className="grid gap-8 md:grid-cols-3">
+            {posts.map((post) => (
+              <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted">
+                  {post.coverImage && (
+                    <Image
+                      src={post.coverImage}
+                      alt={post.title}
+                      fill
+                      sizes="(min-width:768px) 33vw, 90vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  )}
+                </div>
+                {post.blogCategory && (
+                  <p className="mt-4 text-xs uppercase tracking-[0.18em] text-amber">
+                    {post.blogCategory.name}
+                  </p>
+                )}
+                <h3 className="mt-1 font-display text-xl leading-snug">{post.title}</h3>
+                {post.excerpt && (
+                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{post.excerpt}</p>
+                )}
+              </Link>
+            ))}
+          </div>
+        </Section>
+      )}
+
+      {/* Instagram */}
+      <Section eyebrow="instagram" title="@resinriva" description="A daily look inside the studio.">
+        <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <a
+              key={i}
+              href={site.socials.instagram || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative aspect-square overflow-hidden rounded-xl bg-muted"
+            >
+              <Image
+                src={`https://picsum.photos/seed/resinriva-ig-${i}/400/400`}
+                alt="placeholder — Instagram"
+                fill
+                sizes="(min-width:640px) 16vw, 33vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+            </a>
           ))}
         </div>
       </Section>
 
-      {/* ── WhatsApp CTA band ──────────────────────────────── */}
+      {/* WhatsApp CTA */}
       <section className="mesh-ink text-ivory">
         <Container className="py-20 sm:py-24">
           <ScrollReveal className="mx-auto max-w-2xl text-center">
@@ -152,19 +261,18 @@ export default function Home() {
               Have a piece in mind?
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-ivory/75">
-              Tell us your idea and we&apos;ll shape it into something worth keeping.
-              No checkout — every order is finalised on WhatsApp.
+              Tell us your idea and we&apos;ll shape it into something worth keeping. No checkout —
+              every order is finalised on WhatsApp.
             </p>
-            <div className="mt-8 flex justify-center">
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Button asChild variant="gold" size="lg">
-                <a
-                  href={waLink(defaultEnquiry)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href={waLink(defaultEnquiry)} target="_blank" rel="noopener noreferrer">
                   <MessageCircle />
                   Chat with the studio
                 </a>
+              </Button>
+              <Button asChild variant="glass" size="lg" className="text-ivory">
+                <Link href="/custom-order">Start a custom order</Link>
               </Button>
             </div>
           </ScrollReveal>
