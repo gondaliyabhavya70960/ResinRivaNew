@@ -14,11 +14,14 @@ export function Hero({ videoUrl }: { videoUrl?: string | null }) {
     <section className="relative isolate overflow-hidden mesh-ink text-ivory">
       {videoUrl && (
         <video
+          aria-hidden
           className="absolute inset-0 -z-20 h-full w-full object-cover opacity-40"
           autoPlay
           muted
           loop
           playsInline
+          preload="metadata"
+          disablePictureInPicture
         >
           <source src={videoUrl} />
         </video>

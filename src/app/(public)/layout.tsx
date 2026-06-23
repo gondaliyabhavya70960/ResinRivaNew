@@ -1,6 +1,9 @@
 import { getSiteData } from "@/lib/queries";
 import { LenisProvider } from "@/components/providers/lenis-provider";
 import { Preloader } from "@/components/motion/preloader";
+import { GlassDefs } from "@/components/motion/glass-defs";
+import { CursorGlow } from "@/components/motion/cursor-glow";
+import { PageTransition } from "@/components/motion/page-transition";
 import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -16,11 +19,15 @@ export default async function PublicLayout({
   const site = await getSiteData();
   return (
     <>
+      <GlassDefs />
       <Preloader />
+      <CursorGlow />
       <LenisProvider>
         <AnnouncementBar announcement={site.announcement} />
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1">
+          <PageTransition>{children}</PageTransition>
+        </main>
         <Footer site={site} />
       </LenisProvider>
     </>

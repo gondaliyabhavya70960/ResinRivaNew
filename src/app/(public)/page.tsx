@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import { ParallaxImage } from "@/components/motion/parallax-image";
 import { Hero } from "@/components/sections/hero";
 import { StatCounters } from "@/components/sections/stat-counters";
 import { Marquee } from "@/components/sections/marquee";
@@ -77,15 +78,12 @@ export default async function Home() {
             </div>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted shadow-[var(--shadow-luxe)]">
-              <Image
-                src="https://picsum.photos/seed/resinriva-studio/900/1125"
-                alt="placeholder — ResinRiva studio"
-                fill
-                sizes="(min-width:1024px) 40vw, 90vw"
-                className="object-cover"
-              />
-            </div>
+            <ParallaxImage
+              src="https://picsum.photos/seed/resinriva-studio/900/1125"
+              alt="placeholder — ResinRiva studio"
+              sizes="(min-width:1024px) 40vw, 90vw"
+              className="aspect-[4/5] rounded-2xl bg-muted shadow-[var(--shadow-luxe)]"
+            />
           </ScrollReveal>
         </div>
       </Section>

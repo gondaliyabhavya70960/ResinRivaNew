@@ -46,52 +46,28 @@ export function LiquidGlass({
   const canRefract = useRefractionSupport();
   const useRefract = refraction && canRefract;
 
+  // The `#rr-glass` filter def lives once at the app root (see <GlassDefs/>),
+  // so refracting instances only reference it — no duplicate filter ids.
   return (
-    <>
-      {useRefract && <GlassFilter />}
-      <Comp
-        data-refraction={useRefract ? "" : undefined}
-        className={cn(
-          "relative rounded-2xl border border-white/15 bg-white/8 backdrop-blur-xl backdrop-saturate-150",
-          "shadow-[var(--shadow-glass)]",
-          className,
-        )}
-        style={
-          useRefract
-            ? {
-                backdropFilter: "url(#rr-glass) blur(8px) saturate(160%)",
-                WebkitBackdropFilter: "url(#rr-glass) blur(8px) saturate(160%)",
-              }
-            : undefined
-        }
-        {...props}
-      >
-        {children}
-      </Comp>
-    </>
-  );
-}
-
-/** Shared SVG displacement filter (rendered only when refraction is active). */
-function GlassFilter() {
-  return (
-    <svg aria-hidden className="pointer-events-none absolute h-0 w-0">
-      <filter id="rr-glass">
-        <feTurbulence
-          type="fractalNoise"
-          baseFrequency="0.012 0.012"
-          numOctaves="2"
-          seed="7"
-          result="noise"
-        />
-        <feDisplacementMap
-          in="SourceGraphic"
-          in2="noise"
-          scale="18"
-          xChannelSelector="R"
-          yChannelSelector="G"
-        />
-      </filter>
-    </svg>
+    <Comp
+      data-refraction={useRefract ? "" : undefined}
+      className={cn(
+        "relative rounded-2xl border border-white/15 bg-white/8 backdrop-blur-xl backdrop-saturate-150",
+        "shadow-[var(--shadow-glass)]",
+        className,
+      )}
+      style={
+        useRefract
+          ? {
+              backdropFilter: "url(#rr-glass) blur(8px) saturate(160%)",
+              WebkitBackdropFilter: "url(#rr-glass) blur(8px) saturate(160%)",
+              willChange: "backdrop-filter",
+            }
+          : undefined
+      }
+      {...props}
+    >
+      {children}
+    </Comp>
   );
 }

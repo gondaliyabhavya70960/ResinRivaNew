@@ -9,13 +9,13 @@
 
 | Item | Value |
 | --- | --- |
-| Current Phase | **Phase 8 — Portfolio + Blog + Search** ✅ COMPLETE |
-| Next Phase | **Phase 9 — Motion Polish** (awaiting permission) |
+| Current Phase | **Phase 9 — Motion Polish** ✅ COMPLETE |
+| Next Phase | **Phase 10 — SEO + Deploy/Domain** (in progress this session) |
 | Branch | `claude/epic-bell-dof5as` (all phases develop here → PR to `main`) |
 | Env | Owner set all Vercel env vars ✅ · DB auto-inits on deploy (non-fatal bootstrap) |
-| PRs | #1–9 merged (P1–P7 + wiring) · #10 (P8) open |
+| PRs | #1–10 merged (P1–P8) · P9–P11 this session |
 | Repo | https://github.com/gondaliyabhavya70960/ResinRivaNew.git |
-| Last updated | Phase 8 |
+| Last updated | Phase 9 |
 
 ---
 
@@ -104,11 +104,21 @@
 - **Search:** `/search` (`SearchBox` client input + grouped product/portfolio/journal results) + header search icon (desktop + mobile menu).
 - Components: `src/components/blog/tiptap-content.tsx`, `src/components/portfolio/before-after.tsx`, `src/components/shop/search-box.tsx`. Verified: `tsc`/`build`/`eslint` clean.
 
+### ✅ Phase 9 — Motion Polish
+- **New motion primitives** (`src/components/motion/`):
+  - `GlassDefs` — the `#rr-glass` SVG displacement filter, now rendered **once** at the public-layout root. `LiquidGlass` no longer emits a per-instance `<filter>` (duplicate-id issue resolved); refracting instances just reference `url(#rr-glass)` + `will-change: backdrop-filter`. Refraction stays Chromium-only via the existing `useSyncExternalStore` feature-detect → blur fallback (Safari/Firefox).
+  - `CursorGlow` — spring-trailed ambient pointer light (`useMotionValue`/`useSpring`), **fine-pointer only** (`useSyncExternalStore` on `matchMedia("(pointer:fine)")`), `mix-blend-screen`, `z-30` (below header/modals). Returns `null` on touch + reduced-motion.
+  - `PageTransition` — per-route enter fade+rise keyed on `usePathname()` (enter-only → no App-Router AnimatePresence exit-freeze). Passthrough under reduced-motion. Wraps `{children}` in `(public)/layout.tsx`.
+  - `ParallaxImage` — **GSAP ScrollTrigger** parallax for key images; GSAP is **dynamically imported** (code-split, only loads where used), over-sized 124% layer inside an `overflow-hidden` frame, `will-change-transform`, `ctx.revert()` cleanup. Static/covering under reduced-motion. Applied to: home studio image, about story image, blog cover (`strength={9}`).
+- **Tuning:** Hero `<video>` → `preload="metadata"` + `disablePictureInPicture` + `aria-hidden`. `Marquee` → edge-fade `.marquee-mask`, `will-change-transform` + GPU promote, duplicated items `aria-hidden`. `StatCounters` → `tabular-nums` (no width jitter) + `toLocaleString("en-IN")`.
+- **Reduced-motion audit:** every motion component gated (CursorGlow/PageTransition/ParallaxImage return static; MouseParallax/ScrollReveal/Preloader/StatCounters/Lenis already gated; CSS marquee/glass covered by the global `@media (prefers-reduced-motion)` guard).
+- **Perf/INP:** `next/image` `sizes` audited (correct); below-fold media lazy by default; product-gallery main image keeps `priority` (LCP); `will-change`/GPU only on actively-animated nodes. `tsc`/`next build`/`eslint` all clean.
+
 ---
 
 ## 2. Pending Features (by phase)
 
-- **Phase 9** — Motion polish (mouse tracking, GSAP scroll, counters, marquee, cursor glow, page transitions, refraction + Safari fallback, reduced-motion audit, perf/INP pass).
+- **Phase 9** ✅ — Motion polish (done: GlassDefs dedupe, CursorGlow, PageTransition, GSAP ParallaxImage, counter/marquee/video tuning, reduced-motion audit, perf/INP pass).
 - **Phase 10** — SEO (Metadata API, OG images, schema markup, sitemap.ts, robots.ts, canonicals), Vercel prod deploy + custom domain, analytics, finish docs.
 - **Phase 11** — COMPETITOR.md (top-20), seed 100+ products + 50+ blogs (original), finalize CONTEXT.md.
 
@@ -293,7 +303,7 @@ styles/
 
 - `vercel link` not run (CLI absent / needs the owner's Vercel auth) — do during Phase 3 service setup.
 - `public/` is currently empty (default Next/Vercel SVGs removed); real logo/og/poster assets added later. Favicon is `src/app/favicon.ico` (App Router convention).
-- `LiquidGlass` renders its SVG displacement filter per refracting instance (duplicate `#rr-glass` id) — harmless; dedupe to a single global def in Phase 9.
+- ~~`LiquidGlass` duplicate `#rr-glass` id~~ — **fixed in Phase 9**: filter def now rendered once via `<GlassDefs/>` at the public-layout root.
 - Socials (Instagram/Facebook) are placeholder `#` links until set in Site Settings (Phase 5).
 - **DB migrate/seed run automatically on Vercel deploy** via `vercel-build` → `node scripts/db-bootstrap.mjs && next build` (bootstrap is **non-fatal** — best-effort migrate+seed, never breaks the build; the first Vercel deploy with the strict `migrate && seed && build` chain FAILED, hence the resilient wrapper). Neon `channel_binding` stripped in `db.ts`/`seed.ts`. Sandbox egress **allowlist blocks Neon + Blob** (403), so they can't run here. Seed first-run-guarded (`SEED_FORCE=1`). Manual: `npm run db:deploy && npm run db:seed` from open-egress machine.
 - **Default branch** is still `claude/epic-bell-dof5as`; switch to `main` via GitHub UI (no MCP/API tool for this repo setting).
