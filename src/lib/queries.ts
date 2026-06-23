@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { prisma } from "@/lib/db";
 import { siteConfig } from "@/lib/site";
+import type { Prisma } from "@prisma/client";
 
 /** All public reads are wrapped so an empty/unreachable DB renders gracefully. */
 
@@ -120,5 +121,164 @@ export const getHomeStats = cache(async () => {
     return { products, portfolio, posts };
   } catch {
     return { products: 0, portfolio: 0, posts: 0 };
+  }
+});
+
+/* ── Portfolio ─────────────────────────────────────────── */
+
+export const getPortfolios = cache(async (categorySlug?: string) => {
+  try {
+    return await prisma.portfolio.findMany({
+      where: { status: "PUBLISHED", ...(categorySlug ? { category: { slug: categorySlug } } : {}) },
+      orderBy: { createdAt: "desc" },
+      include: { images: { orderBy: { order: "asc" }, take: 1 }, category: true },
+    });
+  } catch {
+    return [];
+  }
+});
+
+export const getPortfolio = cache(async (slug: string) => {
+  try {
+    return await prisma.portfolio.findFirst({
+      where: { slug, status: "PUBLISHED" },
+      include: { images: { orderBy: { order: "asc" } }, category: true },
+    });
+  } catch {
+    return null;
+  }
+});
+
+export const getPortfolioCategories = cache(async () => {
+  try {
+    return await prisma.category.findMany({
+      where: { portfolios: { some: { status: "PUBLISHED" } } },
+      orderBy: { order: "asc" },
+    });
+  } catch {
+    return [];
+  }
+});
+
+/* ── Blog ──────────────────────────────────────────────── */
+
+export const getPosts = cache(
+  async (opts: { categorySlug?: string; tagSlug?: string; skip?: number; take?: number }) => {
+    const { categorySlug, tagSlug, skip = 0, take = 12 } = opts;
+    try {
+      const where: Prisma.BlogPostWhereInput = { status: "PUBLISHED" };
+      if (categorySlug) where.blogCategory = { slug: categorySlug };
+      if (tagSlug) where.tags = { some: { tag: { slug: tagSlug } } };
+      const [posts, total] = await Promise.all([
+        prisma.blogPost.findMany({
+          where,
+          orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+          skip,
+          take,
+          include: { blogCategory: true },
+        }),
+        prisma.blogPost.count({ where }),
+      ]);
+      return { posts, total };
+    } catch {
+      return { posts: [], total: 0 };
+    }
+  },
+);
+
+export const getPost = cache(async (slug: string) => {
+  try {
+    return await prisma.blogPost.findFirst({
+      where: { slug, status: "PUBLISHED" },
+      include: { blogCategory: true, tags: { include: { tag: true } } },
+    });
+  } catch {
+    return null;
+  }
+});
+
+export const getRelatedPosts = cache(
+  async (postId: string, categoryId: string | null, take = 3) => {
+    try {
+      return await prisma.blogPost.findMany({
+        where: {
+          status: "PUBLISHED",
+          NOT: { id: postId },
+          ...(categoryId ? { blogCategoryId: categoryId } : {}),
+        },
+        orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+        take,
+        include: { blogCategory: true },
+      });
+    } catch {
+      return [];
+    }
+  },
+);
+
+export const getBlogTaxonomies = cache(async () => {
+  try {
+    const [categories, tags] = await Promise.all([
+      prisma.blogCategory.findMany({
+        where: { posts: { some: { status: "PUBLISHED" } } },
+        orderBy: { name: "asc" },
+      }),
+      prisma.tag.findMany({
+        where: { posts: { some: { post: { status: "PUBLISHED" } } } },
+        orderBy: { name: "asc" },
+        take: 30,
+      }),
+    ]);
+    return { categories, tags };
+  } catch {
+    return { categories: [], tags: [] };
+  }
+});
+
+/* ── Search ────────────────────────────────────────────── */
+
+export const searchAll = cache(async (q: string) => {
+  const term = q.trim();
+  if (!term) return { products: [], posts: [], portfolios: [] };
+  try {
+    const [products, posts, portfolios] = await Promise.all([
+      prisma.product.findMany({
+        where: {
+          status: "PUBLISHED",
+          OR: [
+            { title: { contains: term, mode: "insensitive" } },
+            { shortTagline: { contains: term, mode: "insensitive" } },
+            { description: { contains: term, mode: "insensitive" } },
+          ],
+        },
+        take: 12,
+        include: { images: { orderBy: { order: "asc" }, take: 2 }, category: true },
+      }),
+      prisma.blogPost.findMany({
+        where: {
+          status: "PUBLISHED",
+          OR: [
+            { title: { contains: term, mode: "insensitive" } },
+            { excerpt: { contains: term, mode: "insensitive" } },
+          ],
+        },
+        take: 12,
+        include: { blogCategory: true },
+      }),
+      prisma.portfolio.findMany({
+        where: {
+          status: "PUBLISHED",
+          OR: [
+            { title: { contains: term, mode: "insensitive" } },
+            { story: { contains: term, mode: "insensitive" } },
+          ],
+        },
+        take: 12,
+        include: { images: { orderBy: { order: "asc" }, take: 1 } },
+      }),
+    ]);
+    return { products, posts, portfolios };
+  } catch {
+    return { products: [], posts: [], portfolios: [] };
   }
 });
