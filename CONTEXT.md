@@ -9,13 +9,13 @@
 
 | Item | Value |
 | --- | --- |
-| Current Phase | **Phase 10 — SEO + Deploy/Domain** ✅ COMPLETE |
-| Next Phase | **Phase 11 — Competitor research + content seeding** (in progress this session) |
+| Current Phase | **Phase 11 — Competitor research + content seeding** ✅ COMPLETE |
+| Next Phase | **None — all 11 build phases done.** Remaining items are owner-only (domain, default branch). |
 | Branch | `claude/epic-bell-dof5as` (all phases develop here → PR to `main`) |
 | Env | Owner set all Vercel env vars ✅ · DB auto-inits on deploy (non-fatal bootstrap) |
 | PRs | #1–10 merged (P1–P8) · #11 open (P9–P11 this session) |
 | Repo | https://github.com/gondaliyabhavya70960/ResinRivaNew.git |
-| Last updated | Phase 10 |
+| Last updated | Phase 11 |
 
 ---
 
@@ -124,13 +124,22 @@
 - Build registers `○ /opengraph-image`, `○ /robots.txt`, `ƒ /sitemap.xml`. `tsc`/`next build`/`eslint` clean.
 - **Owner step (deploy/domain):** connect `shop.bhavyagondaliya.co.in` in Vercel → Project → Domains (DNS to Vercel); confirm `NEXT_PUBLIC_SITE_URL`/`AUTH_URL` match. Submit sitemap in Search Console.
 
+### ✅ Phase 11 — Competitor Research + Content Seeding
+- **`COMPETITOR.md`** populated: 20 entries (India WhatsApp-model players + global marketplaces/reference brands) analysed for product TYPES, price bands, ordering model, content topics — **no copied text/names/images** (originality rule). Summary → market gaps, India pricing insights, and the product/blog opportunity lists that drove the seed.
+- **`prisma/seed-content.ts`** — bulk, original, idempotent (upsert-by-slug), **first-run-guarded** (`existing > 30` → skip; `SEED_FORCE=1` to re-run):
+  - **122 products across 10 categories** (adds a new `3d-printed-decor` category — the brand is resin art AND 3D printing). Concept-driven, palette-varied; each has 2 images (picsum placeholders), category-appropriate customisation fields, realistic INR price bands; furniture is bespoke (`showPrice:false` → "Enquire").
+  - **51 blog posts across 6 blog categories** (adds `inspiration`, `weddings`, `printing`). Rich Tiptap JSON (intro, H2 sections, bullet lists, a pull-quote) via local node builders — validated against `TiptapContent`'s node types; tags upserted + linked.
+  - Builders (`buildProducts`/`buildDoc`/`posts`) exported + a direct-run guard so importing for tests doesn't hit the DB. Verified at runtime: 122 products (no dup slugs, all have images+fields), 51 posts (valid nodes, `listItem>paragraph` ok).
+- **Script + deploy wiring:** `npm run db:seed:content` (`tsx prisma/seed-content.ts`); added to `scripts/db-bootstrap.mjs` (runs after base seed, non-fatal). On the next deploy the catalogue + journal auto-populate, then the guard skips on later deploys (admin edits safe). With the base seed: **~128 products + ~53 posts** live. `tsc`/`eslint` clean.
+
 ---
 
 ## 2. Pending Features (by phase)
 
 - **Phase 9** ✅ — Motion polish (done: GlassDefs dedupe, CursorGlow, PageTransition, GSAP ParallaxImage, counter/marquee/video tuning, reduced-motion audit, perf/INP pass).
 - **Phase 10** ✅ — SEO done (Metadata, canonicals, OG image, JSON-LD, sitemap.ts, robots.ts, SEO_GUIDE). Owner still to connect the custom domain in Vercel + submit sitemap to Search Console.
-- **Phase 11** — COMPETITOR.md (top-20), seed 100+ products + 50+ blogs (original), finalize CONTEXT.md.
+- **Phase 11** ✅ — COMPETITOR.md (20 entries), `seed-content.ts` (122 products / 51 posts, original), wired into deploy bootstrap, CONTEXT.md finalised.
+- **All 11 build phases are complete.** Remaining work is owner-only: (a) flip the GitHub default branch to `main`; (b) connect `shop.bhavyagondaliya.co.in` in Vercel + verify env; (c) submit the sitemap to Google Search Console; (d) replace picsum placeholder images with real ResinRiva photography via `/studio`.
 
 ---
 
@@ -304,9 +313,9 @@ styles/
 
 ## 9. Current Progress
 
-- Phases 1–8 complete. **All public pages + the full admin CMS are built** (home, shop, product, custom-order, portfolio, blog, search, contact, about, process, faq, legal; `/studio` complete) and the WhatsApp order flow works end-to-end.
-- Owner set all Vercel env vars; production deploy auto-migrates + seeds. Public pages `force-dynamic`.
-- Remaining: motion polish (P9), SEO + deploy/domain (P10), competitor research + 100+ products / 50+ blogs seeding (P11). Default-branch flip to `main` + domain still owner's to confirm.
+- **Phases 1–11 ALL complete.** Full public site + admin CMS + WhatsApp order flow + motion polish + SEO + bulk original content. `tsc`/`next build`/`eslint` green throughout.
+- Owner set all Vercel env vars; production deploy auto-migrates + seeds (base seed) + bulk content seed (first-run-guarded). Public pages `force-dynamic`.
+- **Remaining = owner-only:** flip default branch to `main`; connect domain + verify env; submit sitemap to Search Console; swap picsum placeholders for real photos in `/studio`.
 
 ---
 
@@ -340,12 +349,17 @@ NEXT_PUBLIC_SITE_URL=https://shop.bhavyagondaliya.co.in
 
 ---
 
-## 12. EXACT Next Phase + Next Tasks
+## 12. Build Complete — Owner Handoff
 
-### ▶ Phase 9 — Motion Polish — DO NOT START WITHOUT PERMISSION
+**All 11 build phases are done.** There is no "next phase". What remains is owner-only operational setup:
 
-1. Mouse tracking on remaining heroes/key images; GSAP scroll-reveal/parallax on sections; cursor glow; page-transition polish; liquid-glass refraction tuning + Safari/Firefox fallback verification; tune stat counters + marquee.
-2. **Reduced-motion audit** across all motion components (already gated — verify) + a perf pass: lazy-load below-the-fold media, correct `next/image` `sizes`, dedupe the LiquidGlass `#rr-glass` filter id to a single global def, protect INP (`contain`/`will-change` on filtered/animated nodes).
-3. `npm run build` check, update CONTEXT.md, commit, push, STOP.
+1. **Default branch** → flip to `main` in GitHub → Settings → Branches (no API tool for this repo setting).
+2. **Domain** → Vercel → Project → Domains → add `shop.bhavyagondaliya.co.in` (point DNS to Vercel). Confirm `NEXT_PUBLIC_SITE_URL` + `AUTH_URL` match the live domain.
+3. **First production deploy after merge** runs `db-bootstrap.mjs`: `migrate deploy` → base `seed` → `seed-content` (bulk). The bulk seed is first-run-guarded, so it populates once (~128 products / ~53 posts) then auto-skips. To re-assert bulk content later: set `SEED_FORCE=1` for one deploy (or run `npm run db:seed:content` from an open-egress machine).
+4. **Search Console** → submit `https://shop.bhavyagondaliya.co.in/sitemap.xml`.
+5. **Real photography** → replace picsum placeholders (alt text tagged "placeholder") with real ResinRiva photos via `/studio` (Products, Portfolio, Blog covers, Site Settings hero video).
+6. **Security** → rotate the Neon/Blob credentials that were pasted in chat earlier; set a strong `ADMIN_PASSWORD` (the seed warns if unset).
 
-**Note:** keep effects subtle and luxury; never regress accessibility — gate ALL motion behind `prefers-reduced-motion`. GSAP is free (incl. plugins). Then Phase 10 = SEO + deploy/domain; Phase 11 = competitor research + 100+ products / 50+ blogs seeding.
+**Seed scripts:** `npm run db:seed` (base — admin, settings, 9 categories, starter content; first-run-guarded) · `npm run db:seed:content` (bulk — adds `3d-printed-decor` + 3 blog categories, 122 products, 51 posts; first-run-guarded; `SEED_FORCE=1` to force).
+
+**Catalogue note:** categories are now **10** (base 9 + `3d-printed-decor`); blog categories now **6** (base `guides`/`gifting`/`behind-the-scenes` + `inspiration`/`weddings`/`printing`).
