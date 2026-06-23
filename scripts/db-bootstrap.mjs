@@ -21,6 +21,11 @@ if (process.env.DATABASE_URL) {
   // Phase 11 bulk catalogue + journal. Idempotent + first-run-guarded
   // (auto-skips once the catalogue is populated, so admin edits are safe).
   tryRun("bulk content seed", "npx tsx prisma/seed-content.ts");
+  // Locked out of /studio? Set ADMIN_PASSWORD + RESET_ADMIN=1 and redeploy to
+  // reset just the admin password (content untouched). Remove RESET_ADMIN after.
+  if (process.env.RESET_ADMIN === "1") {
+    tryRun("reset admin password", "npx tsx prisma/reset-admin.ts");
+  }
 } else {
   console.warn("⚠ DATABASE_URL not set — skipping migrate/seed. Set it in Vercel env.");
 }
