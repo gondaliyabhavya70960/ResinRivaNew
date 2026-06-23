@@ -9,13 +9,13 @@
 
 | Item | Value |
 | --- | --- |
-| Current Phase | **Phase 7 — Shop + Order Flow** ✅ COMPLETE |
-| Next Phase | **Phase 8 — Portfolio + Blog + Search** (awaiting permission) |
+| Current Phase | **Phase 8 — Portfolio + Blog + Search** ✅ COMPLETE |
+| Next Phase | **Phase 9 — Motion Polish** (awaiting permission) |
 | Branch | `claude/epic-bell-dof5as` (all phases develop here → PR to `main`) |
 | Env | Owner set all Vercel env vars ✅ · DB auto-inits on deploy (non-fatal bootstrap) |
-| PRs | #1–8 merged (P1–P6 + wiring) · #9 (P7) open |
+| PRs | #1–9 merged (P1–P7 + wiring) · #10 (P8) open |
 | Repo | https://github.com/gondaliyabhavya70960/ResinRivaNew.git |
-| Last updated | Phase 7 |
+| Last updated | Phase 8 |
 
 ---
 
@@ -97,11 +97,17 @@
 - **Custom Order** `/custom-order` (`CustomOrderForm`) → `createInquiry` (CUSTOM_ORDER). **WhatsApp Order** `/whatsapp-order` fallback (reads sessionStorage via `useSyncExternalStore`; summary + "Open WhatsApp").
 - Verified: `tsc` / `next build` / `eslint` clean. **Note:** portfolio/blog public detail + search = Phase 8.
 
+### ✅ Phase 8 — Portfolio + Blog + Search
+- **Query helpers** (`src/lib/queries.ts`): `getPortfolios`/`getPortfolio`/`getPortfolioCategories`; `getPosts` (paginated)/`getPost`/`getRelatedPosts`/`getBlogTaxonomies`; `searchAll` (products+posts+portfolios, ILIKE `contains` insensitive).
+- **Portfolio:** `/portfolio` (grid + category filter) and `/portfolio/[slug]` (before/after slider, gallery lightbox, video, results-meta sidebar, enquire CTA). `BeforeAfter` client slider (clip-path + range).
+- **Blog:** `/blog` (grid + category filter + page pagination) and `/blog/[slug]` (cover, author/date, **`TiptapContent`** recursive JSON→HTML renderer w/ prose styling, tags → tag filter, related posts, Article JSON-LD).
+- **Search:** `/search` (`SearchBox` client input + grouped product/portfolio/journal results) + header search icon (desktop + mobile menu).
+- Components: `src/components/blog/tiptap-content.tsx`, `src/components/portfolio/before-after.tsx`, `src/components/shop/search-box.tsx`. Verified: `tsc`/`build`/`eslint` clean.
+
 ---
 
 ## 2. Pending Features (by phase)
 
-- **Phase 8** — Public Portfolio (case studies, before/after, lightbox), Blog listing + detail, Instagram gallery, Search.
 - **Phase 9** — Motion polish (mouse tracking, GSAP scroll, counters, marquee, cursor glow, page transitions, refraction + Safari fallback, reduced-motion audit, perf/INP pass).
 - **Phase 10** — SEO (Metadata API, OG images, schema markup, sitemap.ts, robots.ts, canonicals), Vercel prod deploy + custom domain, analytics, finish docs.
 - **Phase 11** — COMPETITOR.md (top-20), seed 100+ products + 50+ blogs (original), finalize CONTEXT.md.
@@ -277,9 +283,9 @@ styles/
 
 ## 9. Current Progress
 
-- Phases 1–7 complete. Admin CMS + public core + **the full Shop & WhatsApp order flow** (shop, product detail with dynamic customization + 3D viewer + reference uploads + live preview, custom order, fallback page).
+- Phases 1–8 complete. **All public pages + the full admin CMS are built** (home, shop, product, custom-order, portfolio, blog, search, contact, about, process, faq, legal; `/studio` complete) and the WhatsApp order flow works end-to-end.
 - Owner set all Vercel env vars; production deploy auto-migrates + seeds. Public pages `force-dynamic`.
-- Remaining public: portfolio/blog public detail + search (Phase 8); then motion polish (P9), SEO + deploy (P10), competitor + seeding (P11). Default-branch flip to `main` + domain still owner's to confirm.
+- Remaining: motion polish (P9), SEO + deploy/domain (P10), competitor research + 100+ products / 50+ blogs seeding (P11). Default-branch flip to `main` + domain still owner's to confirm.
 
 ---
 
@@ -315,12 +321,10 @@ NEXT_PUBLIC_SITE_URL=https://shop.bhavyagondaliya.co.in
 
 ## 12. EXACT Next Phase + Next Tasks
 
-### ▶ Phase 8 — Portfolio + Blog + Search — DO NOT START WITHOUT PERMISSION
+### ▶ Phase 9 — Motion Polish — DO NOT START WITHOUT PERMISSION
 
-1. **Public Portfolio** `/portfolio` (case-study grid + filter by category) and `/portfolio/[slug]` (story, **before/after slider** [client], gallery lightbox, video, results metadata). `generateMetadata`.
-2. **Public Blog** `/blog` (list + category/tag filter + pagination) and `/blog/[slug]` (render **Tiptap JSON → HTML** via a small recursive renderer or `@tiptap/static-renderer`, cover, author, date, tags, related posts, internal product links). `generateMetadata` + Article schema.
-3. **Search** `/search` (Postgres ILIKE across products, posts, portfolio) + wire a header search entry.
-4. Add public query helpers (portfolio/blog/search) to `src/lib/queries.ts`. Reuse `ProductGallery`/lightbox patterns.
-5. `npm run build` check, update CONTEXT.md, commit, push, STOP.
+1. Mouse tracking on remaining heroes/key images; GSAP scroll-reveal/parallax on sections; cursor glow; page-transition polish; liquid-glass refraction tuning + Safari/Firefox fallback verification; tune stat counters + marquee.
+2. **Reduced-motion audit** across all motion components (already gated — verify) + a perf pass: lazy-load below-the-fold media, correct `next/image` `sizes`, dedupe the LiquidGlass `#rr-glass` filter id to a single global def, protect INP (`contain`/`will-change` on filtered/animated nodes).
+3. `npm run build` check, update CONTEXT.md, commit, push, STOP.
 
-**Note:** Tiptap content is stored as JSON — render server-side. Keep pages `force-dynamic` (DB at runtime). Internal links from posts to `/product/[slug]` per the originality/SEO goal.
+**Note:** keep effects subtle and luxury; never regress accessibility — gate ALL motion behind `prefers-reduced-motion`. GSAP is free (incl. plugins). Then Phase 10 = SEO + deploy/domain; Phase 11 = competitor research + 100+ products / 50+ blogs seeding.

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Menu, X, MessageCircle } from "lucide-react";
+import { Menu, X, MessageCircle, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
@@ -57,7 +57,14 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="hidden lg:flex">
+          <div className="hidden items-center gap-2 lg:flex">
+            <Link
+              href="/search"
+              aria-label="Search"
+              className="grid size-9 place-items-center rounded-full transition-colors hover:bg-foreground/10"
+            >
+              <Search className="size-4" />
+            </Link>
             <Button asChild variant="gold" size="sm">
               <a href={waLink(defaultEnquiry)} target="_blank" rel="noopener noreferrer">
                 <MessageCircle />
@@ -91,6 +98,13 @@ export function Header() {
                 {item.title}
               </Link>
             ))}
+            <Link
+              href="/search"
+              onClick={() => setOpen(false)}
+              className="rounded-lg px-2 py-2 transition-colors hover:bg-foreground/5"
+            >
+              Search
+            </Link>
             <Button asChild variant="gold" className="mt-2">
               <a href={waLink(defaultEnquiry)} target="_blank" rel="noopener noreferrer">
                 <MessageCircle />
