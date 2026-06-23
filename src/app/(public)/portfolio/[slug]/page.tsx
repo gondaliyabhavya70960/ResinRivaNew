@@ -19,7 +19,11 @@ export async function generateMetadata({
   const { slug } = await params;
   const p = await getPortfolio(slug);
   return p
-    ? { title: p.title, description: p.story?.slice(0, 155) ?? undefined }
+    ? {
+        title: p.title,
+        description: p.story?.slice(0, 155) ?? undefined,
+        alternates: { canonical: `/portfolio/${slug}` },
+      }
     : { title: "Portfolio" };
 }
 

@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Shop",
   description: "Browse ResinRiva's collection of handcrafted resin art, décor and keepsakes — made to order.",
+  alternates: { canonical: "/shop" },
 };
 
 async function getCategories() {

@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Portfolio",
   description: "A selection of bespoke ResinRiva commissions — resin art, furniture and keepsakes.",
+  alternates: { canonical: "/portfolio" },
 };
 
 export default async function PortfolioPage({

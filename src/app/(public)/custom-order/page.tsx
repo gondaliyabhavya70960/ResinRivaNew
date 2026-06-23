@@ -5,6 +5,7 @@ import { CustomOrderForm } from "@/components/product/custom-order-form";
 export const metadata: Metadata = {
   title: "Custom Order",
   description: "Commission a bespoke resin or 3D-printed piece from ResinRiva — finalised on WhatsApp.",
+  alternates: { canonical: "/custom-order" },
 };
 
 export default function CustomOrderPage() {

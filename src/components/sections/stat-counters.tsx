@@ -20,8 +20,8 @@ function Counter({ to, suffix }: { to: number; suffix?: string }) {
   }, [inView, to, reduce]);
 
   return (
-    <span ref={ref}>
-      {val}
+    <span ref={ref} className="tabular-nums">
+      {val.toLocaleString("en-IN")}
       {suffix}
     </span>
   );

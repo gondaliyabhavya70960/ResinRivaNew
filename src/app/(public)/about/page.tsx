@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import { ParallaxImage } from "@/components/motion/parallax-image";
 
 export const metadata: Metadata = {
   title: "About",
   description:
     "ResinRiva is a luxury studio crafting bespoke resin art, custom 3D-printed décor and personalised keepsakes — handmade to order in India.",
+  alternates: { canonical: "/about" },
 };
 
 const values = [
@@ -54,15 +55,12 @@ export default function AboutPage() {
             </div>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted shadow-[var(--shadow-luxe)]">
-              <Image
-                src="https://picsum.photos/seed/resinriva-about/900/1125"
-                alt="placeholder — ResinRiva craft"
-                fill
-                sizes="(min-width:1024px) 40vw, 90vw"
-                className="object-cover"
-              />
-            </div>
+            <ParallaxImage
+              src="https://picsum.photos/seed/resinriva-about/900/1125"
+              alt="placeholder — ResinRiva craft"
+              sizes="(min-width:1024px) 40vw, 90vw"
+              className="aspect-[4/5] rounded-2xl bg-muted shadow-[var(--shadow-luxe)]"
+            />
           </ScrollReveal>
         </div>
       </Section>

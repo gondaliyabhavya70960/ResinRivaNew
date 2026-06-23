@@ -13,6 +13,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Contact",
   description: "Get in touch with ResinRiva — WhatsApp, phone, email, and our studio location.",
+  alternates: { canonical: "/contact" },
 };
 
 export default async function ContactPage() {

@@ -18,6 +18,9 @@ function tryRun(label, cmd) {
 if (process.env.DATABASE_URL) {
   tryRun("prisma migrate deploy", "npx prisma migrate deploy");
   tryRun("prisma db seed", "npx prisma db seed");
+  // Phase 11 bulk catalogue + journal. Idempotent + first-run-guarded
+  // (auto-skips once the catalogue is populated, so admin edits are safe).
+  tryRun("bulk content seed", "npx tsx prisma/seed-content.ts");
 } else {
   console.warn("⚠ DATABASE_URL not set — skipping migrate/seed. Set it in Vercel env.");
 }

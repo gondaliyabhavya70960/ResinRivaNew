@@ -173,6 +173,17 @@
   .contain-strict {
     contain: strict;
   }
+  /* Soft fade at both edges of a horizontal marquee */
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  }
 }
 
 @keyframes marquee {

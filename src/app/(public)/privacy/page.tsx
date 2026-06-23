@@ -4,6 +4,7 @@ import { Section } from "@/components/ui/section";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "How ResinRiva collects, uses and protects your information.",
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {

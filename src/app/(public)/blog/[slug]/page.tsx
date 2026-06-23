@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Badge } from "@/components/ui/badge";
+import { ParallaxImage } from "@/components/motion/parallax-image";
 import { TiptapContent } from "@/components/blog/tiptap-content";
 import { getPost, getRelatedPosts } from "@/lib/queries";
 import { siteConfig } from "@/lib/site";
@@ -22,6 +23,7 @@ export async function generateMetadata({
   return {
     title: p.seoTitle || p.title,
     description: p.seoDescription || p.excerpt || undefined,
+    alternates: { canonical: `/blog/${slug}` },
     openGraph: { type: "article", images: p.coverImage ? [p.coverImage] : undefined },
   };
 }
@@ -72,16 +74,14 @@ export default async function BlogPostPage({
           </div>
 
           {post.coverImage && (
-            <div className="relative mx-auto mt-8 aspect-[16/9] max-w-4xl overflow-hidden rounded-2xl bg-muted">
-              <Image
-                src={post.coverImage}
-                alt={post.title}
-                fill
-                sizes="(min-width:1024px) 60vw, 100vw"
-                className="object-cover"
-                priority
-              />
-            </div>
+            <ParallaxImage
+              src={post.coverImage}
+              alt={post.title}
+              sizes="(min-width:1024px) 60vw, 100vw"
+              priority
+              strength={9}
+              className="mx-auto mt-8 aspect-[16/9] max-w-4xl rounded-2xl bg-muted"
+            />
           )}
 
           <div className="mx-auto mt-10 max-w-3xl">

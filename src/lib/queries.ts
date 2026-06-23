@@ -235,6 +235,31 @@ export const getBlogTaxonomies = cache(async () => {
   }
 });
 
+/* ── Sitemap ───────────────────────────────────────────── */
+
+export const getSitemapEntries = cache(async () => {
+  try {
+    const [products, portfolios, posts, categories] = await Promise.all([
+      prisma.product.findMany({
+        where: { status: "PUBLISHED" },
+        select: { slug: true, updatedAt: true },
+      }),
+      prisma.portfolio.findMany({
+        where: { status: "PUBLISHED" },
+        select: { slug: true, createdAt: true },
+      }),
+      prisma.blogPost.findMany({
+        where: { status: "PUBLISHED" },
+        select: { slug: true, updatedAt: true },
+      }),
+      prisma.category.findMany({ select: { slug: true, createdAt: true } }),
+    ]);
+    return { products, portfolios, posts, categories };
+  } catch {
+    return { products: [], portfolios: [], posts: [], categories: [] };
+  }
+});
+
 /* ── Search ────────────────────────────────────────────── */
 
 export const searchAll = cache(async (q: string) => {
