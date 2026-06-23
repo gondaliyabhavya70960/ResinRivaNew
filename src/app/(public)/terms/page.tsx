@@ -4,6 +4,7 @@ import { Section } from "@/components/ui/section";
 export const metadata: Metadata = {
   title: "Terms",
   description: "The terms for commissioning and purchasing from ResinRiva.",
+  alternates: { canonical: "/terms" },
 };
 
 export default function TermsPage() {

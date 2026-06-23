@@ -23,6 +23,7 @@ export async function generateMetadata({
   return {
     title: p.seoTitle || p.title,
     description: p.seoDescription || p.excerpt || undefined,
+    alternates: { canonical: `/blog/${slug}` },
     openGraph: { type: "article", images: p.coverImage ? [p.coverImage] : undefined },
   };
 }

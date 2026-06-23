@@ -8,6 +8,9 @@ import { ProductGallery } from "@/components/product/product-gallery";
 import { ModelViewer } from "@/components/product/model-viewer";
 import { OrderForm, type Opt } from "@/components/product/order-form";
 import { ProductCard, priceLabel } from "@/components/product/product-card";
+import { JsonLd } from "@/components/seo/json-ld";
+import { productLd, breadcrumbLd } from "@/lib/structured-data";
+import { siteConfig } from "@/lib/site";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -54,6 +57,7 @@ export async function generateMetadata({
   return {
     title: p.seoTitle || p.title,
     description: p.seoDescription || p.shortTagline || undefined,
+    alternates: { canonical: `/product/${slug}` },
     openGraph: ogImage ? { images: [ogImage] } : undefined,
   };
 }
@@ -88,6 +92,19 @@ export default async function ProductPage({
 
   return (
     <>
+      <JsonLd
+        data={[
+          productLd(product, siteConfig.name),
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Shop", path: "/shop" },
+            ...(product.category
+              ? [{ name: product.category.name, path: `/shop/${product.category.slug}` }]
+              : []),
+            { name: product.title, path: `/product/${product.slug}` },
+          ]),
+        ]}
+      />
       <Container className="py-10 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-2">
           <div className="space-y-4">

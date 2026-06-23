@@ -7,6 +7,8 @@ import { PageTransition } from "@/components/motion/page-transition";
 import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { JsonLd } from "@/components/seo/json-ld";
+import { organizationLd, websiteLd } from "@/lib/structured-data";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +21,7 @@ export default async function PublicLayout({
   const site = await getSiteData();
   return (
     <>
+      <JsonLd data={[organizationLd(site), websiteLd(site)]} />
       <GlassDefs />
       <Preloader />
       <CursorGlow />

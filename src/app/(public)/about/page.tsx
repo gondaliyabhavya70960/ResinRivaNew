@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "About",
   description:
     "ResinRiva is a luxury studio crafting bespoke resin art, custom 3D-printed décor and personalised keepsakes — handmade to order in India.",
+  alternates: { canonical: "/about" },
 };
 
 const values = [

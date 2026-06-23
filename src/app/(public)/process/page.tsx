@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Process",
   description:
     "How ResinRiva works — from your brief to a finished, handmade heirloom delivered to your door.",
+  alternates: { canonical: "/process" },
 };
 
 const steps = [

@@ -9,13 +9,13 @@
 
 | Item | Value |
 | --- | --- |
-| Current Phase | **Phase 9 — Motion Polish** ✅ COMPLETE |
-| Next Phase | **Phase 10 — SEO + Deploy/Domain** (in progress this session) |
+| Current Phase | **Phase 10 — SEO + Deploy/Domain** ✅ COMPLETE |
+| Next Phase | **Phase 11 — Competitor research + content seeding** (in progress this session) |
 | Branch | `claude/epic-bell-dof5as` (all phases develop here → PR to `main`) |
 | Env | Owner set all Vercel env vars ✅ · DB auto-inits on deploy (non-fatal bootstrap) |
-| PRs | #1–10 merged (P1–P8) · P9–P11 this session |
+| PRs | #1–10 merged (P1–P8) · #11 open (P9–P11 this session) |
 | Repo | https://github.com/gondaliyabhavya70960/ResinRivaNew.git |
-| Last updated | Phase 9 |
+| Last updated | Phase 10 |
 
 ---
 
@@ -114,12 +114,22 @@
 - **Reduced-motion audit:** every motion component gated (CursorGlow/PageTransition/ParallaxImage return static; MouseParallax/ScrollReveal/Preloader/StatCounters/Lenis already gated; CSS marquee/glass covered by the global `@media (prefers-reduced-motion)` guard).
 - **Perf/INP:** `next/image` `sizes` audited (correct); below-fold media lazy by default; product-gallery main image keeps `priority` (LCP); `will-change`/GPU only on actively-animated nodes. `tsc`/`next build`/`eslint` all clean.
 
+### ✅ Phase 10 — SEO + Deploy/Domain
+- **Structured data:** `src/lib/structured-data.ts` builders + `src/components/seo/json-ld.tsx` (`<JsonLd>` serializes one/many blobs, `<`-escaped). Emitted: `Organization` + `WebSite`(+`SearchAction`) sitewide in `(public)/layout.tsx`; `Product`(+`AggregateOffer` INR / `availability: MadeToOrder`) + `BreadcrumbList` on product pages; `FAQPage` on `/faq`; `Article` on blog posts (pre-existing). Offers are price *guidance* only — no checkout (brand rule intact).
+- **Sitemap:** `src/app/sitemap.ts` (dynamic, resilient) — static pages + published products / shop categories / portfolio / blog posts w/ `lastModified`. New query `getSitemapEntries` in `queries.ts`.
+- **robots:** `src/app/robots.ts` — allow `/`, disallow `/studio` `/api/` `/whatsapp-order`, links `/sitemap.xml`.
+- **OG image:** `src/app/opengraph-image.tsx` — branded 1200×630 card via `next/og` `ImageResponse` (default for pages without their own; products/blog still use `ogImage`/`coverImage`).
+- **Canonicals:** `alternates.canonical` on home + all indexable static pages + dynamic detail pages (product/blog/portfolio/shop-category via `generateMetadata`). `/search` → `robots:{index:false}`.
+- **Docs:** `SEO_GUIDE.md` rewritten to as-built + validation steps. `DEPLOYMENT.md` already covers Vercel + Neon/Blob + domain.
+- Build registers `○ /opengraph-image`, `○ /robots.txt`, `ƒ /sitemap.xml`. `tsc`/`next build`/`eslint` clean.
+- **Owner step (deploy/domain):** connect `shop.bhavyagondaliya.co.in` in Vercel → Project → Domains (DNS to Vercel); confirm `NEXT_PUBLIC_SITE_URL`/`AUTH_URL` match. Submit sitemap in Search Console.
+
 ---
 
 ## 2. Pending Features (by phase)
 
 - **Phase 9** ✅ — Motion polish (done: GlassDefs dedupe, CursorGlow, PageTransition, GSAP ParallaxImage, counter/marquee/video tuning, reduced-motion audit, perf/INP pass).
-- **Phase 10** — SEO (Metadata API, OG images, schema markup, sitemap.ts, robots.ts, canonicals), Vercel prod deploy + custom domain, analytics, finish docs.
+- **Phase 10** ✅ — SEO done (Metadata, canonicals, OG image, JSON-LD, sitemap.ts, robots.ts, SEO_GUIDE). Owner still to connect the custom domain in Vercel + submit sitemap to Search Console.
 - **Phase 11** — COMPETITOR.md (top-20), seed 100+ products + 50+ blogs (original), finalize CONTEXT.md.
 
 ---
@@ -230,7 +240,8 @@ styles/
 - ✅ `app/api/auth/[...nextauth]` — Auth.js v5 handler (GET/POST). **Built (Phase 3).**
 - ✅ `app/api/upload/route.ts` — Vercel Blob `handleUpload`. **Built (Phase 4)** — admin uploads require a session; `refs/` prefix anonymous (Phase 7).
 - Server Actions **built:** categories/products/media (P4); blog/portfolio/inquiries/testimonials/faqs/settings/users (P5); `submitContact` (P6); `createInquiry` (order) + `fetchProducts`/`countProducts` (shop) (P7). All in `src/actions/`. Public reads in `src/lib/queries.ts`. `buildOrderMessage` in `src/lib/whatsapp.ts`.
-- `app/api/search/route.ts` — Postgres search across products/posts/portfolio (Phase 8).
+- ✅ `app/sitemap.ts` (dynamic) · `app/robots.ts` · `app/opengraph-image.tsx` (`next/og`). **Built (Phase 10).**
+- Search is implemented as a server page (`/search` + `searchAll` in `queries.ts`), not an API route.
 - Server Actions (planned): product CRUD, category CRUD, portfolio CRUD, blog CRUD, inquiry create + status update, testimonials/FAQs/settings CRUD, contact submit, `createInquiry` (order flow).
 
 ---

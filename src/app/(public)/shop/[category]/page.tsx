@@ -23,7 +23,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { category } = await params;
   const c = await getCategory(category);
-  return { title: c?.name ?? "Shop", description: c?.description ?? undefined };
+  return {
+    title: c?.name ?? "Shop",
+    description: c?.description ?? undefined,
+    alternates: { canonical: `/shop/${category}` },
+  };
 }
 
 export default async function CategoryPage({

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, MessageCircle, Hand, Gem, Crown } from "lucide-react";
@@ -21,6 +22,10 @@ import {
 } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const pillars = [
   { icon: Hand, title: "Handcrafted", body: "Every piece is poured, cured and finished by hand in small batches — never mass-produced." },
