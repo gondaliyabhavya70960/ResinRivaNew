@@ -1066,6 +1066,161 @@ export const posts: PostSpec[] = [
 ];
 
 /* ───────────────────────────────────────────────────────────────────────
+   Portfolio — original case studies (populates /portfolio).
+   ─────────────────────────────────────────────────────────────────────── */
+type SeedPortfolio = {
+  title: string;
+  slug: string;
+  story: string;
+  categorySlug?: string;
+  resultsMeta: { label: string; value: string }[];
+  gallery: number;
+};
+
+const portfolios: SeedPortfolio[] = [
+  {
+    title: "A Live-Edge River Dining Table for a Surat Home",
+    slug: "river-dining-table-surat-home",
+    categorySlug: "resin-furniture",
+    story:
+      "A family wanted a dining table that could seat eight and become the heart of their new home. We paired a single live-edge acacia slab with a deep ocean-blue resin river, then finished it to a furniture-grade gloss. The result anchors the room and starts a conversation at every dinner.",
+    resultsMeta: [
+      { label: "Piece", value: "8-seater river dining table" },
+      { label: "Materials", value: "Acacia + deep-pour epoxy" },
+      { label: "Timeline", value: "9 weeks" },
+      { label: "Location", value: "Surat" },
+    ],
+    gallery: 3,
+  },
+  {
+    title: "Preserving a 2019 Wedding Varmala",
+    slug: "preserving-2019-wedding-varmala",
+    categorySlug: "varmala-preservation",
+    story:
+      "A couple sent us their wedding garland, carefully stored for years, hoping it could be saved. We gently dried, arranged and sealed the blooms in a deep teak shadow-box with their names and date. What was fading in a drawer now hangs proudly in their hallway.",
+    resultsMeta: [
+      { label: "Service", value: "Varmala preservation" },
+      { label: "Frame", value: "20×20 inch teak shadow-box" },
+      { label: "Timeline", value: "6 weeks" },
+      { label: "Location", value: "Ahmedabad" },
+    ],
+    gallery: 2,
+  },
+  {
+    title: "Ocean Wall Art for a Coastal-Themed Living Room",
+    slug: "ocean-wall-art-coastal-living-room",
+    categorySlug: "art-craft",
+    story:
+      "An interior designer briefed us for a calming focal piece above a long sofa. We poured a three-panel breaking-wave seascape in layered blues and foamy whites, scaled to the wall. It set the tone for the whole room.",
+    resultsMeta: [
+      { label: "Piece", value: "Triptych ocean wall art" },
+      { label: "Size", value: "Combined 60×30 inch" },
+      { label: "Timeline", value: "3 weeks" },
+      { label: "For", value: "Interior design project" },
+    ],
+    gallery: 3,
+  },
+  {
+    title: "A Geode Clock for a 25th Anniversary",
+    slug: "geode-clock-25th-anniversary",
+    categorySlug: "resin-wall-clocks",
+    story:
+      "A client wanted a silver-anniversary gift that felt as special as the milestone. We crafted a geode-ring wall clock in emerald and ivory with real gold leaf and a silent movement, engraved with the couple's names and wedding year.",
+    resultsMeta: [
+      { label: "Piece", value: "20-inch geode wall clock" },
+      { label: "Finish", value: "Emerald agate + gold leaf" },
+      { label: "Timeline", value: "2 weeks" },
+      { label: "Occasion", value: "25th anniversary" },
+    ],
+    gallery: 2,
+  },
+  {
+    title: "A Lithophane Lamp from a Family Portrait",
+    slug: "lithophane-lamp-family-portrait",
+    categorySlug: "3d-printed-decor",
+    story:
+      "A son wanted a surprise gift for his parents using an old family photograph. We turned the portrait into a 3D-printed lithophane lamp — plain white by day, glowing into the full image when lit at night. There were happy tears at the reveal.",
+    resultsMeta: [
+      { label: "Piece", value: "Custom lithophane lamp" },
+      { label: "Process", value: "Photo → 3D print" },
+      { label: "Timeline", value: "10 days" },
+      { label: "Occasion", value: "Surprise gift" },
+    ],
+    gallery: 2,
+  },
+  {
+    title: "Bespoke Awards for a Tech Team Offsite",
+    slug: "bespoke-awards-tech-team-offsite",
+    categorySlug: "3d-printed-decor",
+    story:
+      "A company needed twelve matching-but-personalised awards for an annual offsite. We designed a clean 3D-printed trophy with each recipient's name and added a resin-set base in the brand colours. Consistent, premium, and delivered ahead of the deadline.",
+    resultsMeta: [
+      { label: "Project", value: "12 personalised awards" },
+      { label: "Mix", value: "3D print + resin base" },
+      { label: "Timeline", value: "3 weeks" },
+      { label: "For", value: "Corporate offsite" },
+    ],
+    gallery: 3,
+  },
+  {
+    title: "A Heart-Layout Varmala Frame for a Destination Wedding",
+    slug: "heart-varmala-frame-destination-wedding",
+    categorySlug: "varmala-preservation",
+    story:
+      "After a destination wedding, a couple flew their garlands home and asked us to keep the memory alive. We shaped both varmalas into a soft heart around an inset portrait, finished with a gentle gold-leaf accent. A keepsake as romantic as the day.",
+    resultsMeta: [
+      { label: "Service", value: "Dual-garland preservation" },
+      { label: "Layout", value: "Heart with photo inset" },
+      { label: "Timeline", value: "5 weeks" },
+      { label: "Location", value: "Goa → Mumbai" },
+    ],
+    gallery: 2,
+  },
+  {
+    title: "A Statement Console for a Boutique Hotel Lobby",
+    slug: "statement-console-boutique-hotel-lobby",
+    categorySlug: "resin-furniture",
+    story:
+      "A boutique hotel wanted a lobby piece that guests would remember and photograph. We built a slim live-edge console with a galaxy-blue resin channel and a brass base, scaled to the entry wall. It quickly became the hotel's most-tagged corner.",
+    resultsMeta: [
+      { label: "Piece", value: "Live-edge console table" },
+      { label: "Finish", value: "Galaxy resin + brass base" },
+      { label: "Timeline", value: "8 weeks" },
+      { label: "For", value: "Hospitality project" },
+    ],
+    gallery: 3,
+  },
+  {
+    title: "A Personalised Nameplate Set for a New Home",
+    slug: "personalised-nameplate-set-new-home",
+    categorySlug: "home-decor",
+    story:
+      "New homeowners wanted a coordinated welcome at their door and entryway. We made a marble-effect nameplate with crisp gold lettering plus a matching key tray in the same palette. A small, polished first impression for every visitor.",
+    resultsMeta: [
+      { label: "Set", value: "Nameplate + key tray" },
+      { label: "Finish", value: "Ivory marble + gold" },
+      { label: "Timeline", value: "2 weeks" },
+      { label: "Occasion", value: "Housewarming" },
+    ],
+    gallery: 2,
+  },
+  {
+    title: "A Floral Preservation Frame from a Bridal Bouquet",
+    slug: "floral-preservation-frame-bridal-bouquet",
+    categorySlug: "varmala-preservation",
+    story:
+      "A bride wanted her bouquet to outlast the wedding week. We preserved the key blooms and floated them in a clean, modern frame with a soft ivory backing. Years on, it still brings the day back the moment she looks at it.",
+    resultsMeta: [
+      { label: "Service", value: "Bouquet preservation" },
+      { label: "Style", value: "Floating-bloom modern frame" },
+      { label: "Timeline", value: "5 weeks" },
+      { label: "Location", value: "Vadodara" },
+    ],
+    gallery: 2,
+  },
+];
+
+/* ───────────────────────────────────────────────────────────────────────
    Upsert
    ─────────────────────────────────────────────────────────────────────── */
 async function main() {
@@ -1183,7 +1338,48 @@ async function main() {
     bCount++;
   }
 
-  console.log(`✅ Bulk content seed complete — ${pCount} products, ${bCount} blog posts, ${allTags.length} tags.`);
+  // Portfolio case studies (+ before/after + gallery images)
+  let folioCount = 0;
+  for (const pf of portfolios) {
+    const before = img(`folio-${pf.slug}-before`, 1);
+    const after = img(`folio-${pf.slug}-after`, 1);
+    const folio = await prisma.portfolio.upsert({
+      where: { slug: pf.slug },
+      update: {
+        title: pf.title,
+        story: pf.story,
+        beforeImageUrl: before,
+        afterImageUrl: after,
+        resultsMeta: pf.resultsMeta as Prisma.InputJsonValue,
+        status: "PUBLISHED",
+        categoryId: pf.categorySlug ? catBySlug[pf.categorySlug] ?? null : null,
+      },
+      create: {
+        title: pf.title,
+        slug: pf.slug,
+        story: pf.story,
+        beforeImageUrl: before,
+        afterImageUrl: after,
+        resultsMeta: pf.resultsMeta as Prisma.InputJsonValue,
+        status: "PUBLISHED",
+        categoryId: pf.categorySlug ? catBySlug[pf.categorySlug] ?? null : null,
+      },
+    });
+    await prisma.portfolioImage.deleteMany({ where: { portfolioId: folio.id } });
+    await prisma.portfolioImage.createMany({
+      data: Array.from({ length: pf.gallery }, (_, i) => ({
+        url: img(`folio-${pf.slug}`, i + 1),
+        alt: `placeholder — ${pf.title} (${i + 1})`,
+        order: i,
+        portfolioId: folio.id,
+      })),
+    });
+    folioCount++;
+  }
+
+  console.log(
+    `✅ Bulk content seed complete — ${pCount} products, ${bCount} blog posts, ${folioCount} portfolios, ${allTags.length} tags.`,
+  );
 }
 
 // Only hit the database when run directly (e.g. `tsx prisma/seed-content.ts`),

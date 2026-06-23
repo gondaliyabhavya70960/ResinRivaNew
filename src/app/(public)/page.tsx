@@ -7,12 +7,14 @@ import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { ParallaxImage } from "@/components/motion/parallax-image";
+import { InstagramFeed } from "@/components/sections/instagram-feed";
 import { Hero } from "@/components/sections/hero";
 import { StatCounters } from "@/components/sections/stat-counters";
 import { Marquee } from "@/components/sections/marquee";
 import { TestimonialsCarousel } from "@/components/sections/testimonials-carousel";
 import { ProductCard } from "@/components/product/product-card";
 import { waLink, defaultEnquiry } from "@/lib/whatsapp";
+import { siteConfig } from "@/lib/site";
 import {
   getSiteData,
   getFeaturedProducts,
@@ -233,27 +235,19 @@ export default async function Home() {
         </Section>
       )}
 
-      {/* Instagram */}
+      {/* Instagram — live feed via Behold */}
       <Section eyebrow="instagram" title="@resinriva" description="A daily look inside the studio.">
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <a
-              key={i}
-              href={site.socials.instagram || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative aspect-square overflow-hidden rounded-xl bg-muted"
-            >
-              <Image
-                src={`https://picsum.photos/seed/resinriva-ig-${i}/400/400`}
-                alt="placeholder — Instagram"
-                fill
-                sizes="(min-width:640px) 16vw, 33vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-            </a>
-          ))}
-        </div>
+        <InstagramFeed feedId={siteConfig.instagramFeedId} />
+        {site.socials.instagram && site.socials.instagram !== "#" && (
+          <div className="mt-8">
+            <Button asChild variant="outline">
+              <a href={site.socials.instagram} target="_blank" rel="noopener noreferrer">
+                Follow on Instagram
+                <ArrowRight />
+              </a>
+            </Button>
+          </div>
+        )}
       </Section>
 
       {/* WhatsApp CTA */}
