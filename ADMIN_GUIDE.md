@@ -8,6 +8,19 @@
 2. Enter your admin email and password.
 3. You land on the **Dashboard**.
 
+## Where your password lives (and how to recover it)
+> Your admin email + password are **never** stored in the website code or on GitHub. They live as **environment variables in Vercel**, which only you can see.
+
+- **To look up the current password:** Vercel → your project → **Settings → Environment Variables** → reveal **`ADMIN_PASSWORD`**. The email is **`ADMIN_EMAIL`**.
+- **If you forgot it / are locked out — reset it (safe, keeps all content):**
+  1. Vercel → **Settings → Environment Variables**: set **`ADMIN_PASSWORD`** to a new password (Production) and add **`RESET_ADMIN`** = **`1`**.
+  2. **Deployments → newest → ⋯ → Redeploy** and wait for it to finish.
+  3. Sign in at **/studio/login** with the new password.
+  4. **Delete `RESET_ADMIN`** and redeploy once more.
+- The login page's **"Forgot password?"** link shows these same steps.
+- ⚠️ Never paste the password into chat, code, commits, or GitHub. Keep it in Vercel and/or a password manager.
+
+
 ## Dashboard
 - See counts: products, inquiries this week, blog posts.
 - See recent WhatsApp orders / inquiries.

@@ -12,6 +12,7 @@ export default function StudioLoginPage() {
   const router = useRouter();
   const [error, setError] = React.useState<string | null>(null);
   const [pending, setPending] = React.useState(false);
+  const [showHelp, setShowHelp] = React.useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,7 +30,7 @@ export default function StudioLoginPage() {
   }
 
   return (
-    <div className="mesh-ink grid min-h-dvh place-items-center px-4">
+    <div className="mesh-ink grid min-h-dvh place-items-center px-4 py-10">
       <div className="w-full max-w-sm rounded-2xl border bg-card p-8 shadow-[var(--shadow-luxe)]">
         <Logo />
         <h1 className="mt-6 font-display text-2xl">Studio sign in</h1>
@@ -54,6 +55,40 @@ export default function StudioLoginPage() {
             {pending ? "Signing in…" : "Sign in"}
           </Button>
         </form>
+
+        <div className="mt-5 border-t pt-4">
+          <button
+            type="button"
+            onClick={() => setShowHelp((v) => !v)}
+            aria-expanded={showHelp}
+            className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+          >
+            Forgot password?
+          </button>
+
+          {showHelp && (
+            <div className="mt-3 space-y-2 rounded-xl bg-muted/60 p-4 text-sm text-muted-foreground">
+              <p className="font-medium text-foreground">Reset your password from Vercel</p>
+              <p>Your password is stored securely in Vercel — never in the website. To reset it:</p>
+              <ol className="list-decimal space-y-1 pl-5">
+                <li>
+                  In Vercel → <span className="font-medium text-foreground">Settings → Environment Variables</span>,
+                  set <code className="rounded bg-background px-1">ADMIN_PASSWORD</code> to a new password
+                  and add <code className="rounded bg-background px-1">RESET_ADMIN</code> ={" "}
+                  <code className="rounded bg-background px-1">1</code> (Production).
+                </li>
+                <li>
+                  Open <span className="font-medium text-foreground">Deployments → newest → ⋯ → Redeploy</span>.
+                </li>
+                <li>Return here and sign in with the new password.</li>
+                <li>
+                  Delete <code className="rounded bg-background px-1">RESET_ADMIN</code> and redeploy once more.
+                </li>
+              </ol>
+              <p className="text-xs">Full steps are in ADMIN_GUIDE.md.</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
