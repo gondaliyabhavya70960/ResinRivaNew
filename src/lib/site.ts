@@ -20,6 +20,8 @@ export const siteConfig = {
   address: "Made-to-order studio · India",
   announcement:
     "Handcrafted resin art & 3D printing — made to order. Every piece is bespoke.",
+  // Behold (behold.so) Instagram feed id — powers the live <InstagramFeed/>.
+  instagramFeedId: "oq8gkyez0lDCZYoAWtiL",
   // Socials are placeholders until set in Site Settings (Phase 5).
   socials: {
     instagram: "#",

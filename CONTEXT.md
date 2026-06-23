@@ -132,6 +132,10 @@
   - Builders (`buildProducts`/`buildDoc`/`posts`) exported + a direct-run guard so importing for tests doesn't hit the DB. Verified at runtime: 122 products (no dup slugs, all have images+fields), 51 posts (valid nodes, `listItem>paragraph` ok).
 - **Script + deploy wiring:** `npm run db:seed:content` (`tsx prisma/seed-content.ts`); added to `scripts/db-bootstrap.mjs` (runs after base seed, non-fatal). On the next deploy the catalogue + journal auto-populate, then the guard skips on later deploys (admin edits safe). With the base seed: **~128 products + ~53 posts** live. `tsc`/`eslint` clean.
 
+### ➕ Post-build additions (same branch, after Phase 11 merge)
+- **Live Instagram feed (Behold):** `src/components/sections/instagram-feed.tsx` (`"use client"`) renders the `<behold-widget>` custom element (ElementType cast, same pattern as model-viewer) and injects `https://w.behold.so/widget.js` once. Replaces the home page's placeholder Instagram grid. Feed id in `siteConfig.instagramFeedId` (`oq8gkyez0lDCZYoAWtiL`). A "Follow on Instagram" button shows when the IG social URL is set.
+- **Portfolio case studies seeded:** `seed-content.ts` now also seeds **10 original portfolio commissions** (before/after + 2–3 gallery images + resultsMeta + category) so `/portfolio` is populated (neither seed had portfolio data before). Bulk seed totals: **122 products, 51 posts, 10 portfolios**.
+
 ---
 
 ## 2. Pending Features (by phase)
