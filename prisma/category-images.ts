@@ -26,6 +26,10 @@ export const categoryImage: Record<string, string> = {
   "varmala-preservation": opt("varmala-preservation"),
   "3d-printed-decor": opt("3d-printed-decor"),
   "resin-furniture": opt("resin-furniture"),
+  "spiritual-festive": opt("spiritual-festive"),
+  "corporate-gifting": opt("corporate-gifting"),
+  "resin-coasters": opt("resin-coasters"),
+  nameplates: opt("nameplates"),
 };
 
 export const categoryImageDesat: Record<string, string> = {
@@ -39,6 +43,10 @@ export const categoryImageDesat: Record<string, string> = {
   "varmala-preservation": desat("varmala-preservation"),
   "3d-printed-decor": desat("3d-printed-decor"),
   "resin-furniture": desat("resin-furniture"),
+  "spiritual-festive": desat("spiritual-festive"),
+  "corporate-gifting": desat("corporate-gifting"),
+  "resin-coasters": desat("resin-coasters"),
+  nameplates: desat("nameplates"),
 };
 
 /** Sensible default when a category has no dedicated image. */
