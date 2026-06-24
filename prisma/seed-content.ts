@@ -1346,13 +1346,14 @@ const portfolios: SeedPortfolio[] = [
    Upsert
    ─────────────────────────────────────────────────────────────────────── */
 async function main() {
-  // First-run guard: only populate when the catalogue is still small, so a
-  // redeploy never overwrites the owner's later edits in /studio. SEED_FORCE=1
-  // forces a re-run (re-asserts all bulk content).
+  // Re-seed until the catalogue reaches its full size, then skip so later
+  // deploys don't overwrite /studio edits. (Self-adjusting: when new products
+  // are added here, it re-runs once to apply them.) SEED_FORCE=1 always re-runs.
   const force = process.env.SEED_FORCE === "1";
+  const products = buildProducts();
   const existing = await prisma.product.count().catch(() => 0);
-  if (!force && existing > 30) {
-    console.log(`ℹ  Bulk content seed skipped — ${existing} products already present (SEED_FORCE=1 to re-run).`);
+  if (!force && existing >= products.length) {
+    console.log(`ℹ  Bulk content seed skipped — ${existing}/${products.length} products already present (SEED_FORCE=1 to re-run).`);
     return;
   }
 
@@ -1364,7 +1365,6 @@ async function main() {
     (await prisma.category.findMany()).map((c) => [c.slug, c.id]),
   );
 
-  const products = buildProducts();
   let pCount = 0;
   for (const p of products) {
     const catId = catBySlug[p.categorySlug];
