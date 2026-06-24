@@ -15,7 +15,12 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const dbUrl = process.env.DATABASE_URL?.replace(/channel_binding=[^&]*&?/gi, "").replace(/[?&]$/, "");
+const dbUrl = (
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.PRISMA_DATABASE_URL ||
+  process.env.POSTGRES_PRISMA_URL
+)?.replace(/channel_binding=[^&]*&?/gi, "").replace(/[?&]$/, "");
 const prisma = new PrismaClient(dbUrl ? { datasourceUrl: dbUrl } : undefined);
 
 async function main() {

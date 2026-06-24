@@ -12,9 +12,22 @@ function cleanUrl(u) {
   return u ? u.replace(/channel_binding=[^&]*&?/gi, "").replace(/[?&]$/, "") : u;
 }
 
+// Resolve the DB URL from whichever env var the host provides (Vercel Postgres /
+// Neon / Prisma Postgres all use different names) and expose it to the Prisma
+// CLI as DATABASE_URL + DATABASE_URL_UNPOOLED, which the schema reads.
+const rawDbUrl =
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.PRISMA_DATABASE_URL ||
+  process.env.POSTGRES_PRISMA_URL;
+const dbUrl = cleanUrl(rawDbUrl);
+const directUrl = cleanUrl(process.env.DATABASE_URL_UNPOOLED || rawDbUrl);
+
 const childEnv = { ...process.env };
-if (childEnv.DATABASE_URL) childEnv.DATABASE_URL = cleanUrl(childEnv.DATABASE_URL);
-if (childEnv.DATABASE_URL_UNPOOLED) childEnv.DATABASE_URL_UNPOOLED = cleanUrl(childEnv.DATABASE_URL_UNPOOLED);
+if (dbUrl) {
+  childEnv.DATABASE_URL = dbUrl;
+  childEnv.DATABASE_URL_UNPOOLED = directUrl;
+}
 
 function tryRun(label, cmd) {
   try {
@@ -49,8 +62,8 @@ async function verify() {
 }
 
 async function main() {
-  if (!process.env.DATABASE_URL) {
-    console.warn("⚠ DATABASE_URL not set — skipping migrate/seed. Set it in Vercel env (Production).");
+  if (!dbUrl) {
+    console.warn("⚠ No database URL found (DATABASE_URL / POSTGRES_URL / PRISMA_DATABASE_URL). Skipping migrate/seed.");
     return;
   }
   console.log("──────── ResinRiva DB bootstrap ────────");

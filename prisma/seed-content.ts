@@ -12,7 +12,12 @@
 import { PrismaClient, type Prisma } from "@prisma/client";
 import { categoryImage, categoryImageDesat, fallbackImage, blogCoverImage } from "./category-images";
 
-const dbUrl = process.env.DATABASE_URL?.replace(/channel_binding=[^&]*&?/gi, "").replace(/[?&]$/, "");
+const dbUrl = (
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.PRISMA_DATABASE_URL ||
+  process.env.POSTGRES_PRISMA_URL
+)?.replace(/channel_binding=[^&]*&?/gi, "").replace(/[?&]$/, "");
 const prisma = new PrismaClient(dbUrl ? { datasourceUrl: dbUrl } : undefined);
 
 const slugify = (s: string) =>
