@@ -2,8 +2,14 @@ import { PrismaClient, type Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { productImage, blogCoverImage, fallbackImage } from "./category-images";
 
-// Strip Neon's `channel_binding` (Prisma can reject it); TLS stays via sslmode.
-const dbUrl = process.env.DATABASE_URL?.replace(/channel_binding=[^&]*&?/gi, "").replace(/[?&]$/, "");
+// Resolve the DB URL from whichever env var the host set, and strip Neon's
+// `channel_binding` (Prisma can reject it); TLS stays via sslmode.
+const dbUrl = (
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.PRISMA_DATABASE_URL ||
+  process.env.POSTGRES_PRISMA_URL
+)?.replace(/channel_binding=[^&]*&?/gi, "").replace(/[?&]$/, "");
 const prisma = new PrismaClient(dbUrl ? { datasourceUrl: dbUrl } : undefined);
 
 // Placeholder images via picsum (always render). Replaced with real ResinRiva
