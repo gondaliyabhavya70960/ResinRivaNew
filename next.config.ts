@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     // Vercel Blob (public CDN) + placeholder image sources used during build.
     remotePatterns: [
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
+      { protocol: "https", hostname: "res.cloudinary.com" },
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "images.pexels.com" },
       { protocol: "https", hostname: "picsum.photos" },
