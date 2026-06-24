@@ -61,6 +61,10 @@ type CatCfg = {
 /* ── New category (the brand is resin art AND 3D printing) ─────────────── */
 const extraCategories = [
   { slug: "3d-printed-decor", name: "3D-Printed Decor", order: 10, description: "Custom 3D-printed lithophanes, figurines, nameplates and décor — designed with you." },
+  { slug: "spiritual-festive", name: "Spiritual & Festive", order: 11, description: "Rangoli, pooja thali, mandir frames and festive diyas, finished in luxe resin." },
+  { slug: "corporate-gifting", name: "Corporate Gifting", order: 12, description: "Premium branded desk pieces, awards and bulk gifts — design-led and consistent." },
+  { slug: "resin-coasters", name: "Resin Coasters", order: 13, description: "Agate, marble and terrazzo coaster sets with metallic-leaf rims." },
+  { slug: "nameplates", name: "Nameplates", order: 14, description: "Marble, ocean and geode resin nameplates for doors, desks and studios." },
 ];
 
 /* ───────────────────────────────────────────────────────────────────────
@@ -160,9 +164,7 @@ const cats: CatCfg[] = [
       { label: "Quantity", type: "NUMBER", helpText: "For sets — e.g. coasters." },
     ],
     concepts: [
-      { name: "Agate Coaster Set of 4", hook: "Four geode-edge coasters with gold rims that double as table jewellery.", tagline: "Drinks deserve a setting.", min: 900, max: 2600, featured: true },
-      { name: "Marble Nameplate", hook: "An elegant doorway nameplate in ivory marble with crisp gold lettering.", tagline: "Arrive in style.", min: 1200, max: 3800 },
-      { name: "Ocean Bookends Pair", hook: "A heavy pair of blue-wave bookends that hold a shelf together beautifully.", tagline: "Anchor your reading.", min: 1400, max: 3600 },
+      { name: "Ocean Bookends Pair", hook: "A heavy pair of blue-wave bookends that hold a shelf together beautifully.", tagline: "Anchor your reading.", min: 1400, max: 3600, featured: true },
       { name: "Photo Memory Block", hook: "A favourite photo encased in a clear resin block that glows on a desk.", tagline: "A moment, paperweighted.", min: 700, max: 2200 },
       { name: "Floral Fridge Magnets", hook: "A set of petite pressed-flower magnets to brighten any kitchen.", tagline: "Little blooms, everywhere.", min: 400, max: 1100 },
       { name: "Geode Pen Stand", hook: "A desk pen stand with a crystal-druzy mouth and a polished base.", tagline: "Desks deserve nice things.", min: 800, max: 2400 },
@@ -411,6 +413,124 @@ const cats: CatCfg[] = [
       { name: "Minimal Resin Bench", hook: "A clean bench pairing pale wood with a single clear resin seam.", tagline: "Sit with restraint." },
       { name: "Marble-Effect Dining Top", hook: "A dining top poured to mimic veined marble at a fraction of the weight.", tagline: "Stone, made lighter." },
       { name: "Statement Wall Panel", hook: "An oversized resin-and-wood panel to anchor a feature wall.", tagline: "The wall's centrepiece.", min: 25000, max: 120000 },
+    ],
+  },
+  {
+    slug: "spiritual-festive",
+    noun: "Resin Spiritual Decor",
+    timeline: "1–2 weeks",
+    materials: "Epoxy resin, pigments, gold leaf, brass",
+    dimensions: "Piece-dependent",
+    priceMin: 500,
+    priceMax: 4500,
+    context: [
+      "Hand-finished in luxe resin with real metallic leaf for a festive glow.",
+      "Made to order in your colours, so it suits your home and your rituals.",
+      "A thoughtful gift for housewarmings, weddings and festivals.",
+    ],
+    fields: [
+      { label: "Colour", type: "SWATCH", options: SWATCHES },
+      { label: "Personalisation (optional)", type: "TEXT", helpText: "Names, a date or a mantra." },
+      { label: "Set Size", type: "SELECT", options: ["Single", "Set of 2", "Set of 5"] },
+    ],
+    concepts: [
+      { name: "Lotus Mandala Rangoli Set", hook: "A reusable resin rangoli of lotus petals in jewel tones and gold leaf.", tagline: "Bloom at the threshold.", min: 700, max: 2400, featured: true },
+      { name: "Gilded Pooja Thali", hook: "A pooja thali with a mandala base, gold rim and wells for diya and roli.", tagline: "Ritual, made radiant.", min: 900, max: 3200 },
+      { name: "Mandir Backdrop Frame", hook: "A resin-and-teak backdrop panel to frame your home mandir in soft light.", tagline: "A worthy backdrop.", min: 1800, max: 4500 },
+      { name: "Ganesha Relief Wall Art", hook: "A serene raised Ganesha in ivory and gold against a deep resin ground.", tagline: "Blessings on the wall.", min: 1500, max: 4200 },
+      { name: "Om Gold-Leaf Wall Disc", hook: "A glossy Om symbol in gold leaf floating on an ocean-blue disc.", tagline: "Sound, made still.", min: 800, max: 2600 },
+      { name: "Festive Diya Platter", hook: "A wide platter cradling five jewel-tone diyas for the season of light.", tagline: "Light, gathered.", min: 800, max: 2400 },
+      { name: "Swastik Door Accent", hook: "A small auspicious swastik in gold and amber for the doorway.", tagline: "Welcome, blessed.", min: 500, max: 1600 },
+      { name: "Marigold Resin Toran", hook: "A resin toran of marigold-style blooms and bells for festive doorways.", tagline: "Dress the doorway.", min: 900, max: 3000 },
+    ],
+  },
+  {
+    slug: "corporate-gifting",
+    noun: "Corporate Gift",
+    timeline: "2–3 weeks",
+    materials: "Epoxy resin, wood, metal, custom branding",
+    dimensions: "Custom",
+    priceMin: 600,
+    priceMax: 6500,
+    context: [
+      "Customised with your logo, names or brand colours and delivered consistently in bulk.",
+      "Useful and beautiful, so it stays on the desk rather than in the drawer.",
+      "One point of contact on WhatsApp from brief to delivery.",
+    ],
+    fields: [
+      { label: "Material", type: "SELECT", options: ["Resin + Wood", "Resin + Metal", "Pure Resin"] },
+      { label: "Branding (logo / name)", type: "TEXT", required: true, helpText: "What to engrave or set inside." },
+      { label: "Quantity", type: "NUMBER", helpText: "Bulk orders welcome." },
+      { label: "Brand Colour", type: "SWATCH", options: SWATCHES },
+    ],
+    concepts: [
+      { name: "Branded Desk Nameplate Gift", hook: "A resin-and-walnut desk nameplate set with your logo and title.", tagline: "Own the desk.", min: 800, max: 2600, featured: true },
+      { name: "Logo Suspension Paperweight", hook: "A crystal-clear resin paperweight with your brand mark suspended inside.", tagline: "Your mark, held.", min: 600, max: 1800 },
+      { name: "Resin Achievement Award", hook: "A sculptural award in ocean-blue and gold for milestones and winners.", tagline: "Make it official.", min: 1200, max: 5000 },
+      { name: "Executive Pen Stand Gift", hook: "A geode-edge pen stand that anchors any executive desk.", tagline: "Quietly senior.", min: 900, max: 2800 },
+      { name: "Corporate Coaster Gift Box", hook: "A boxed set of branded agate coasters for clients and teams.", tagline: "Gift in good taste.", min: 1000, max: 3200 },
+      { name: "Branded Desk Organiser", hook: "A tidy resin organiser for cards, pens and the daily desk clutter.", tagline: "Order, branded.", min: 800, max: 2400 },
+      { name: "Milestone Wall Plaque", hook: "A wall plaque marking an anniversary, launch or recognition.", tagline: "Mark the moment.", min: 1500, max: 5500 },
+      { name: "Welcome Kit Tray", hook: "A branded onboarding tray to present new-hire or client welcome kits.", tagline: "First impressions, set.", min: 1200, max: 4000 },
+    ],
+  },
+  {
+    slug: "resin-coasters",
+    noun: "Resin Coaster Set",
+    timeline: "5–10 days",
+    materials: "Epoxy resin, metallic leaf, cork base",
+    dimensions: "~4 inch each",
+    priceMin: 600,
+    priceMax: 3000,
+    context: [
+      "Sealed to a heat-friendly gloss with a soft cork base that protects surfaces.",
+      "Made to order in your colours, with no two sets ever quite alike.",
+      "A go-to housewarming or hostess gift that always lands.",
+    ],
+    fields: [
+      { label: "Set Size", type: "SELECT", required: true, options: ["Set of 2", "Set of 4", "Set of 6"] },
+      { label: "Metallic Finish", type: "SELECT", options: ["Gold Leaf", "Silver Leaf", "Rose Gold Leaf"] },
+      { label: "Colour", type: "SWATCH", options: SWATCHES },
+    ],
+    concepts: [
+      { name: "Agate Slice Coaster Set", hook: "Geode-edge coasters with gold rims that double as table jewellery.", tagline: "Drinks deserve a setting.", min: 900, max: 2600, featured: true },
+      { name: "Ocean Wave Coaster Set", hook: "Breaking-wave blues and white foam for relaxed coastal tables.", tagline: "A little sea, set down.", min: 800, max: 2200 },
+      { name: "Ivory Marble Coaster Set", hook: "Soft marble-and-gold coasters for a calm, classic table.", tagline: "Quietly classic.", min: 800, max: 2200 },
+      { name: "Terrazzo Pop Coaster Set", hook: "Playful terrazzo chips in a creamy resin for cheerful hosting.", tagline: "Joy, by the cup.", min: 700, max: 1900 },
+      { name: "Galaxy Coaster Set", hook: "Deep-blue starry coasters with gold dust for evening drinks.", tagline: "Cosmic coasters.", min: 800, max: 2200 },
+      { name: "Blush Petal Coaster Set", hook: "Soft pink coasters with real pressed petals for a romantic table.", tagline: "Pretty, pressed.", min: 800, max: 2200 },
+      { name: "Emerald Agate Coaster Set", hook: "Rich emerald agate banding edged in fine gold leaf.", tagline: "Jewel-toned.", min: 900, max: 2600 },
+      { name: "Monogram Coaster Set", hook: "Finished with your initials in gold for a personal touch.", tagline: "Initially yours.", min: 900, max: 2800 },
+    ],
+  },
+  {
+    slug: "nameplates",
+    noun: "Resin Nameplate",
+    timeline: "2–3 weeks",
+    materials: "Epoxy resin, teak, gold leaf, optional LED",
+    dimensions: "8–16 inch",
+    priceMin: 1000,
+    priceMax: 5000,
+    context: [
+      "Your name set in crisp lettering behind a glossy resin finish, ready to mount.",
+      "Made to order in your colours and size, with an optional warm LED backlight.",
+      "A polished first impression for a home, studio or new office.",
+    ],
+    fields: [
+      { label: "Size", type: "SIZE", required: true, options: ["8 inch", "10 inch", "12 inch", "16 inch"] },
+      { label: "Mount", type: "SELECT", options: ["Door", "Desk", "Wall"] },
+      { label: "Name & Text", type: "TEXT", required: true, helpText: "Exactly as you'd like it." },
+      { label: "Finish", type: "SELECT", options: ["Marble", "Ocean", "Geode", "Minimal Ivory"] },
+    ],
+    concepts: [
+      { name: "Ivory Marble Door Nameplate", hook: "A marble-effect nameplate with crisp gold lettering and a teak border.", tagline: "Arrive in style.", min: 1200, max: 3800, featured: true },
+      { name: "Ocean Wave Nameplate", hook: "A blue-wave bordered nameplate for a coastal, welcoming entrance.", tagline: "Home by the sea.", min: 1200, max: 3600 },
+      { name: "Geode Edge Nameplate", hook: "A crystalline geode edge frames your family name in gold.", tagline: "A jewelled welcome.", min: 1400, max: 4200 },
+      { name: "Floral Press Nameplate", hook: "Real pressed blooms set around your name for a soft, personal plate.", tagline: "Named in bloom.", min: 1300, max: 3800 },
+      { name: "Galaxy Nameplate", hook: "A starry deep-blue plate with gold lettering for a bold doorway.", tagline: "Written in stars.", min: 1300, max: 3800 },
+      { name: "Minimal Ivory Nameplate", hook: "A clean ivory plate with slim modern lettering for pared-back homes.", tagline: "Less, named well.", min: 1000, max: 3000 },
+      { name: "LED Backlit Nameplate", hook: "A nameplate with a warm LED glow that lifts your name after dark.", tagline: "Lit by name.", min: 2000, max: 5000 },
+      { name: "Executive Desk Nameplate", hook: "A resin-and-walnut desk nameplate for an office, studio or cabin.", tagline: "Claim the desk.", min: 1000, max: 2800 },
     ],
   },
 ];
@@ -1226,13 +1346,14 @@ const portfolios: SeedPortfolio[] = [
    Upsert
    ─────────────────────────────────────────────────────────────────────── */
 async function main() {
-  // First-run guard: only populate when the catalogue is still small, so a
-  // redeploy never overwrites the owner's later edits in /studio. SEED_FORCE=1
-  // forces a re-run (re-asserts all bulk content).
+  // Re-seed until the catalogue reaches its full size, then skip so later
+  // deploys don't overwrite /studio edits. (Self-adjusting: when new products
+  // are added here, it re-runs once to apply them.) SEED_FORCE=1 always re-runs.
   const force = process.env.SEED_FORCE === "1";
+  const products = buildProducts();
   const existing = await prisma.product.count().catch(() => 0);
-  if (!force && existing > 30) {
-    console.log(`ℹ  Bulk content seed skipped — ${existing} products already present (SEED_FORCE=1 to re-run).`);
+  if (!force && existing >= products.length) {
+    console.log(`ℹ  Bulk content seed skipped — ${existing}/${products.length} products already present (SEED_FORCE=1 to re-run).`);
     return;
   }
 
@@ -1244,7 +1365,6 @@ async function main() {
     (await prisma.category.findMany()).map((c) => [c.slug, c.id]),
   );
 
-  const products = buildProducts();
   let pCount = 0;
   for (const p of products) {
     const catId = catBySlug[p.categorySlug];

@@ -15,6 +15,7 @@ import { TestimonialsCarousel } from "@/components/sections/testimonials-carouse
 import { ProductCard } from "@/components/product/product-card";
 import { waLink, defaultEnquiry } from "@/lib/whatsapp";
 import { siteConfig } from "@/lib/site";
+import { shopCategories } from "@/lib/shop-categories";
 import {
   getSiteData,
   getFeaturedProducts,
@@ -105,6 +106,45 @@ export default async function Home() {
           "Bespoke Gifts",
         ]}
       />
+
+      {/* Shop by category */}
+      <Section
+        eyebrow="explore"
+        title="Shop by category"
+        description="Find your piece by type — every category is handcrafted and made to order."
+      >
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          {shopCategories.map((c) => (
+            <Link
+              key={c.slug}
+              href={`/shop/${c.slug}`}
+              className="group relative block overflow-hidden rounded-2xl bg-muted shadow-[var(--shadow-glass)]"
+            >
+              <div className="relative aspect-[4/5]">
+                <Image
+                  src={c.image}
+                  alt={c.name}
+                  fill
+                  sizes="(min-width:1024px) 25vw, 50vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/15 to-transparent" />
+              </div>
+              <span className="absolute inset-x-0 bottom-0 p-4 font-display text-lg leading-tight text-ivory">
+                {c.name}
+              </span>
+            </Link>
+          ))}
+        </div>
+        <div className="mt-10">
+          <Button asChild variant="outline">
+            <Link href="/shop">
+              Browse the full collection
+              <ArrowRight />
+            </Link>
+          </Button>
+        </div>
+      </Section>
 
       {/* Featured products */}
       {featured.length > 0 && (
