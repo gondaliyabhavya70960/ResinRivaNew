@@ -1,5 +1,6 @@
 import { PrismaClient, type Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { productImage, blogCoverImage, fallbackImage } from "./category-images";
 
 // Strip Neon's `channel_binding` (Prisma can reject it); TLS stays via sslmode.
 const dbUrl = process.env.DATABASE_URL?.replace(/channel_binding=[^&]*&?/gi, "").replace(/[?&]$/, "");
@@ -343,7 +344,12 @@ async function main() {
     await prisma.productImage.deleteMany({ where: { productId: product.id } });
     await prisma.customizationField.deleteMany({ where: { productId: product.id } });
     await prisma.productImage.createMany({
-      data: images.map((im, i) => ({ ...im, order: i, productId: product.id })),
+      data: images.map((im, i) => ({
+        url: productImage(categorySlug),
+        alt: im.alt.replace(/^placeholder — /, ""),
+        order: i,
+        productId: product.id,
+      })),
     });
     await prisma.customizationField.createMany({
       data: fields.map((f, i) => ({
@@ -373,10 +379,11 @@ async function main() {
   );
   for (const post of posts) {
     const { categorySlug, ...data } = post;
+    const coverImage = blogCoverImage[categorySlug] ?? data.coverImage ?? fallbackImage;
     await prisma.blogPost.upsert({
       where: { slug: data.slug },
-      update: { ...data, blogCategoryId: blogCatBySlug[categorySlug] },
-      create: { ...data, blogCategoryId: blogCatBySlug[categorySlug] },
+      update: { ...data, coverImage, blogCategoryId: blogCatBySlug[categorySlug] },
+      create: { ...data, coverImage, blogCategoryId: blogCatBySlug[categorySlug] },
     });
   }
 

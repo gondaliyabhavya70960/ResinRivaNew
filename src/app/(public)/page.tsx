@@ -86,8 +86,8 @@ export default async function Home() {
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
             <ParallaxImage
-              src="https://picsum.photos/seed/resinriva-studio/900/1125"
-              alt="placeholder — ResinRiva studio"
+              src="https://res.cloudinary.com/dhaqpl1kz/image/upload/f_auto,q_auto/v1782288799/resinriva/studio-ocean-wall-art.jpg"
+              alt="Handcrafted ResinRiva ocean-wave resin wall art in a luxe interior"
               sizes="(min-width:1024px) 40vw, 90vw"
               className="aspect-[4/5] rounded-2xl bg-muted shadow-[var(--shadow-luxe)]"
             />

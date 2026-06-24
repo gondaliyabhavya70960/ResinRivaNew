@@ -56,8 +56,8 @@ export default function AboutPage() {
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
             <ParallaxImage
-              src="https://picsum.photos/seed/resinriva-about/900/1125"
-              alt="placeholder — ResinRiva craft"
+              src="https://res.cloudinary.com/dhaqpl1kz/image/upload/f_auto,q_auto/v1782289010/resinriva/about-preserved-flower-frame.jpg"
+              alt="Handcrafted ResinRiva preserved-flower and gold-leaf resin keepsake frame"
               sizes="(min-width:1024px) 40vw, 90vw"
               className="aspect-[4/5] rounded-2xl bg-muted shadow-[var(--shadow-luxe)]"
             />

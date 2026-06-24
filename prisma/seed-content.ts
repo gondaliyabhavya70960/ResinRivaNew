@@ -10,11 +10,11 @@
  * Run with:  npm run db:seed:content      (or SEED_FORCE handled by base seed)
  */
 import { PrismaClient, type Prisma } from "@prisma/client";
+import { categoryImage, categoryImageDesat, fallbackImage, blogCoverImage } from "./category-images";
 
 const dbUrl = process.env.DATABASE_URL?.replace(/channel_binding=[^&]*&?/gi, "").replace(/[?&]$/, "");
 const prisma = new PrismaClient(dbUrl ? { datasourceUrl: dbUrl } : undefined);
 
-const img = (seed: string, i = 1) => `https://picsum.photos/seed/rr-${seed}-${i}/1200/1200`;
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
@@ -437,10 +437,7 @@ export function buildProducts() {
         seoTitle: `${c.name} — Handmade ${cat.noun} | ResinRiva`,
         seoDescription: `${c.hook} Custom colour, size and finish — made to order in India. Enquire on WhatsApp.`,
         categorySlug: cat.slug,
-        images: [
-          { url: img(slug, 1), alt: `placeholder — ${c.name}` },
-          { url: img(slug, 2), alt: `placeholder — ${c.name} detail` },
-        ],
+        images: [{ url: categoryImage[cat.slug] ?? fallbackImage, alt: c.name }],
         fields: cat.fields,
       });
     });
@@ -1304,7 +1301,7 @@ async function main() {
         title: post.title,
         excerpt: post.excerpt,
         content: buildDoc(post) as Prisma.InputJsonValue,
-        coverImage: img(`blog-${slug}`, 1),
+        coverImage: blogCoverImage[post.categorySlug] ?? fallbackImage,
         authorName: "ResinRiva Studio",
         status: "PUBLISHED",
         publishedAt: new Date(post.date),
@@ -1317,7 +1314,7 @@ async function main() {
         slug,
         excerpt: post.excerpt,
         content: buildDoc(post) as Prisma.InputJsonValue,
-        coverImage: img(`blog-${slug}`, 1),
+        coverImage: blogCoverImage[post.categorySlug] ?? fallbackImage,
         authorName: "ResinRiva Studio",
         status: "PUBLISHED",
         publishedAt: new Date(post.date),
@@ -1341,8 +1338,9 @@ async function main() {
   // Portfolio case studies (+ before/after + gallery images)
   let folioCount = 0;
   for (const pf of portfolios) {
-    const before = img(`folio-${pf.slug}-before`, 1);
-    const after = img(`folio-${pf.slug}-after`, 1);
+    const catImg = (pf.categorySlug && categoryImage[pf.categorySlug]) || fallbackImage;
+    const before = (pf.categorySlug && categoryImageDesat[pf.categorySlug]) || catImg;
+    const after = catImg;
     const folio = await prisma.portfolio.upsert({
       where: { slug: pf.slug },
       update: {
@@ -1367,12 +1365,7 @@ async function main() {
     });
     await prisma.portfolioImage.deleteMany({ where: { portfolioId: folio.id } });
     await prisma.portfolioImage.createMany({
-      data: Array.from({ length: pf.gallery }, (_, i) => ({
-        url: img(`folio-${pf.slug}`, i + 1),
-        alt: `placeholder — ${pf.title} (${i + 1})`,
-        order: i,
-        portfolioId: folio.id,
-      })),
+      data: [{ url: catImg, alt: pf.title, order: 0, portfolioId: folio.id }],
     });
     folioCount++;
   }
