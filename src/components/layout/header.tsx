@@ -22,9 +22,9 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Over the dark hero the bar is transparent with ivory text; once frosted
-  // (scrolled) it switches to the page foreground colour.
-  const tone = scrolled ? "text-foreground" : "text-ivory";
+  // Always a readable frosted pill so the nav stays legible on any backdrop;
+  // it tightens slightly and deepens its shadow on scroll.
+  const tone = "text-foreground";
 
   return (
     <header
@@ -38,7 +38,8 @@ export function Header() {
           className={cn(
             "flex h-14 items-center justify-between rounded-full px-4 transition-all duration-500 sm:px-5",
             tone,
-            scrolled ? "glass shadow-[var(--shadow-glass)]" : "bg-transparent",
+            "border border-border/60 bg-card/80 backdrop-blur-xl backdrop-saturate-150",
+            scrolled ? "shadow-[var(--shadow-luxe)]" : "shadow-[var(--shadow-glass)]",
           )}
         >
           <Link href="/" aria-label="ResinRiva home" className="shrink-0">
