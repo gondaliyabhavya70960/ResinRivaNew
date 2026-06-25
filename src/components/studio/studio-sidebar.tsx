@@ -15,6 +15,7 @@ import {
   Settings,
   Users,
   ScrollText,
+  Upload,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/brand/logo";
@@ -29,6 +30,7 @@ const links = [
   { href: "/studio/media", label: "Media", icon: ImageIcon, exact: false },
   { href: "/studio/testimonials", label: "Testimonials", icon: Quote, exact: false },
   { href: "/studio/faqs", label: "FAQs", icon: HelpCircle, exact: false },
+  { href: "/studio/import", label: "Bulk import", icon: Upload, exact: false },
   { href: "/studio/settings", label: "Settings", icon: Settings, exact: false },
   { href: "/studio/users", label: "Users", icon: Users, exact: false },
   { href: "/studio/activity", label: "Activity", icon: ScrollText, exact: false },
