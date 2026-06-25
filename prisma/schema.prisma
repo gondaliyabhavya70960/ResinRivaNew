@@ -257,6 +257,14 @@ model Faq {
   order    Int    @default(0)
 }
 
+// ─── Editable content pages (Privacy, Terms, etc.) ──────────────────────
+model ContentPage {
+  slug      String   @id
+  title     String
+  body      String   @db.Text
+  updatedAt DateTime @updatedAt
+}
+
 // ─── Media (Vercel Blob) ────────────────────────────────────────────────
 model Media {
   id        String    @id @default(cuid())
