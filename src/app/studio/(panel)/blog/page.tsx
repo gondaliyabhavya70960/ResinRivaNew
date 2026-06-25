@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { DeleteButton } from "@/components/studio/delete-button";
 import { BlogCategoryForm } from "@/components/studio/blog-category-form";
 import { deleteBlogPost, deleteBlogCategory } from "@/actions/blog";
+import { bulkDelete } from "@/actions/bulk";
+import { BulkProvider, BulkBar, BulkCheckbox, BulkSelectAll } from "@/components/studio/bulk/bulk-select";
 
 export const dynamic = "force-dynamic";
 
@@ -28,46 +30,55 @@ export default async function BlogPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardContent className="p-0">
-            {posts.length === 0 ? (
-              <p className="p-5 text-sm text-muted-foreground">No posts yet.</p>
-            ) : (
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b text-left text-muted-foreground">
-                    <th className="p-4 font-medium">Title</th>
-                    <th className="hidden p-4 font-medium sm:table-cell">Category</th>
-                    <th className="p-4 font-medium">Status</th>
-                    <th className="p-4" />
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {posts.map((p) => (
-                    <tr key={p.id}>
-                      <td className="p-4">
-                        <p className="font-medium">{p.title}</p>
-                        <p className="text-xs text-muted-foreground">{p.slug}</p>
-                      </td>
-                      <td className="hidden p-4 text-muted-foreground sm:table-cell">
-                        {p.blogCategory?.name ?? "—"}
-                      </td>
-                      <td className="p-4">
-                        <Badge variant={p.status === "PUBLISHED" ? "success" : "muted"}>{p.status}</Badge>
-                      </td>
-                      <td className="whitespace-nowrap p-4 text-right">
-                        <Button asChild variant="ghost" size="sm">
-                          <Link href={`/studio/blog/${p.id}/edit`}>Edit</Link>
-                        </Button>
-                        <DeleteButton action={deleteBlogPost.bind(null, p.id)} confirmText={`Delete "${p.title}"?`} />
-                      </td>
+        <BulkProvider>
+          <Card className="lg:col-span-2">
+            <CardContent className="p-0">
+              {posts.length === 0 ? (
+                <p className="p-5 text-sm text-muted-foreground">No posts yet.</p>
+              ) : (
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b text-left text-muted-foreground">
+                      <th className="w-10 p-4">
+                        <BulkSelectAll ids={posts.map((p) => p.id)} />
+                      </th>
+                      <th className="p-4 font-medium">Title</th>
+                      <th className="hidden p-4 font-medium sm:table-cell">Category</th>
+                      <th className="p-4 font-medium">Status</th>
+                      <th className="p-4" />
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </CardContent>
-        </Card>
+                  </thead>
+                  <tbody className="divide-y">
+                    {posts.map((p) => (
+                      <tr key={p.id}>
+                        <td className="p-4">
+                          <BulkCheckbox id={p.id} />
+                        </td>
+                        <td className="p-4">
+                          <p className="font-medium">{p.title}</p>
+                          <p className="text-xs text-muted-foreground">{p.slug}</p>
+                        </td>
+                        <td className="hidden p-4 text-muted-foreground sm:table-cell">
+                          {p.blogCategory?.name ?? "—"}
+                        </td>
+                        <td className="p-4">
+                          <Badge variant={p.status === "PUBLISHED" ? "success" : "muted"}>{p.status}</Badge>
+                        </td>
+                        <td className="whitespace-nowrap p-4 text-right">
+                          <Button asChild variant="ghost" size="sm">
+                            <Link href={`/studio/blog/${p.id}/edit`}>Edit</Link>
+                          </Button>
+                          <DeleteButton action={deleteBlogPost.bind(null, p.id)} confirmText={`Delete "${p.title}"?`} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </CardContent>
+          </Card>
+          <BulkBar entity="blogPost" noun="post" action={bulkDelete} />
+        </BulkProvider>
 
         <Card>
           <CardHeader>

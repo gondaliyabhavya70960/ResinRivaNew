@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { MediaUploader } from "@/components/studio/media-uploader";
 import { DeleteButton } from "@/components/studio/delete-button";
 import { deleteMedia } from "@/actions/media";
+import { bulkDelete } from "@/actions/bulk";
+import { BulkProvider, BulkBar, BulkCheckbox, BulkSelectAll } from "@/components/studio/bulk/bulk-select";
 
 export const dynamic = "force-dynamic";
 
@@ -25,30 +27,40 @@ export default async function MediaPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {media.map((m) => (
-            <Card key={m.id} className="overflow-hidden">
-              <div className="relative aspect-square bg-muted">
-                {m.type === "IMAGE" ? (
-                  <Image src={m.url} alt={m.pathname} fill className="object-cover" sizes="220px" />
-                ) : (
-                  <div className="grid h-full place-items-center text-xs font-medium text-muted-foreground">
-                    {m.type}
-                  </div>
-                )}
-              </div>
-              <CardContent className="space-y-2 p-3">
-                <p className="truncate text-xs text-muted-foreground" title={m.pathname}>
-                  {m.pathname}
-                </p>
-                <div className="flex items-center justify-between">
-                  <Badge variant="muted">{m.type}</Badge>
-                  <DeleteButton action={deleteMedia.bind(null, m.url)} confirmText="Delete this file from Blob?" />
+        <BulkProvider>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <BulkSelectAll ids={media.map((m) => m.url)} />
+            <span>Select all</span>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {media.map((m) => (
+              <Card key={m.id} className="overflow-hidden">
+                <div className="relative aspect-square bg-muted">
+                  <label className="absolute left-2 top-2 z-10 grid size-7 cursor-pointer place-items-center rounded-md bg-card/90 shadow-sm backdrop-blur">
+                    <BulkCheckbox id={m.url} />
+                  </label>
+                  {m.type === "IMAGE" ? (
+                    <Image src={m.url} alt={m.pathname} fill className="object-cover" sizes="220px" />
+                  ) : (
+                    <div className="grid h-full place-items-center text-xs font-medium text-muted-foreground">
+                      {m.type}
+                    </div>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                <CardContent className="space-y-2 p-3">
+                  <p className="truncate text-xs text-muted-foreground" title={m.pathname}>
+                    {m.pathname}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <Badge variant="muted">{m.type}</Badge>
+                    <DeleteButton action={deleteMedia.bind(null, m.url)} confirmText="Delete this file from Blob?" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <BulkBar entity="media" noun="file" action={bulkDelete} />
+        </BulkProvider>
       )}
     </div>
   );
