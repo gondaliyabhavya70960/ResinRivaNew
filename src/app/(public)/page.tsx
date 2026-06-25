@@ -61,7 +61,10 @@ export default async function Home() {
 
   return (
     <>
-      <Hero videoUrl={site.heroVideoUrl} />
+      <Hero
+        videoUrl={site.heroVideoUrl}
+        imageUrl="https://res.cloudinary.com/dhaqpl1kz/image/upload/f_auto,q_auto/resinriva/hero-ocean.jpg"
+      />
 
       {/* Brand story */}
       <Section index="01" eyebrow="the studio" title="An atelier for objects worth keeping.">

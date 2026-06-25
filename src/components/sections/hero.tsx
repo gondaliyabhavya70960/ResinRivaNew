@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, MessageCircle, Star } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,7 @@ import { MouseParallax } from "@/components/motion/mouse-parallax";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { waLink, defaultEnquiry } from "@/lib/whatsapp";
 
-export function Hero({ videoUrl }: { videoUrl?: string | null }) {
+export function Hero({ videoUrl, imageUrl }: { videoUrl?: string | null; imageUrl?: string | null }) {
   return (
     <section className="relative isolate overflow-hidden mesh-ink text-ivory">
       {videoUrl && (
@@ -25,6 +26,14 @@ export function Hero({ videoUrl }: { videoUrl?: string | null }) {
         >
           <source src={videoUrl} />
         </video>
+      )}
+      {imageUrl && !videoUrl && (
+        <div aria-hidden className="absolute inset-0 -z-20">
+          <Image src={imageUrl} alt="" fill priority sizes="100vw" className="object-cover object-right" />
+          {/* Left scrim keeps the headline readable; right stays luminous */}
+          <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/15" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-ink/30" />
+        </div>
       )}
       <MouseParallax strength={14} className="relative">
         <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
