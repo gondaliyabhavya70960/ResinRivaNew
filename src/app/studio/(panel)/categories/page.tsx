@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { CategoryForm } from "@/components/studio/category-form";
 import { DeleteButton } from "@/components/studio/delete-button";
 import { deleteCategory } from "@/actions/categories";
+import { bulkDelete } from "@/actions/bulk";
+import { BulkProvider, BulkBar, BulkCheckbox, BulkSelectAll } from "@/components/studio/bulk/bulk-select";
 
 export const dynamic = "force-dynamic";
 
@@ -19,42 +21,51 @@ export default async function CategoriesPage() {
       <h1 className="font-display text-3xl">Categories</h1>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardContent className="p-0">
-            {categories.length === 0 ? (
-              <p className="p-5 text-sm text-muted-foreground">No categories yet.</p>
-            ) : (
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b text-left text-muted-foreground">
-                    <th className="p-4 font-medium">Name</th>
-                    <th className="p-4 font-medium">Slug</th>
-                    <th className="p-4 font-medium">Products</th>
-                    <th className="p-4" />
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {categories.map((c) => (
-                    <tr key={c.id}>
-                      <td className="p-4 font-medium">{c.name}</td>
-                      <td className="p-4 text-muted-foreground">{c.slug}</td>
-                      <td className="p-4">{c._count.products}</td>
-                      <td className="whitespace-nowrap p-4 text-right">
-                        <Button asChild variant="ghost" size="sm">
-                          <Link href={`/studio/categories/${c.id}/edit`}>Edit</Link>
-                        </Button>
-                        <DeleteButton
-                          action={deleteCategory.bind(null, c.id)}
-                          confirmText={`Delete "${c.name}"? Products keep existing but lose this category.`}
-                        />
-                      </td>
+        <BulkProvider>
+          <Card className="lg:col-span-2">
+            <CardContent className="p-0">
+              {categories.length === 0 ? (
+                <p className="p-5 text-sm text-muted-foreground">No categories yet.</p>
+              ) : (
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b text-left text-muted-foreground">
+                      <th className="w-10 p-4">
+                        <BulkSelectAll ids={categories.map((c) => c.id)} />
+                      </th>
+                      <th className="p-4 font-medium">Name</th>
+                      <th className="p-4 font-medium">Slug</th>
+                      <th className="p-4 font-medium">Products</th>
+                      <th className="p-4" />
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </CardContent>
-        </Card>
+                  </thead>
+                  <tbody className="divide-y">
+                    {categories.map((c) => (
+                      <tr key={c.id}>
+                        <td className="p-4">
+                          <BulkCheckbox id={c.id} />
+                        </td>
+                        <td className="p-4 font-medium">{c.name}</td>
+                        <td className="p-4 text-muted-foreground">{c.slug}</td>
+                        <td className="p-4">{c._count.products}</td>
+                        <td className="whitespace-nowrap p-4 text-right">
+                          <Button asChild variant="ghost" size="sm">
+                            <Link href={`/studio/categories/${c.id}/edit`}>Edit</Link>
+                          </Button>
+                          <DeleteButton
+                            action={deleteCategory.bind(null, c.id)}
+                            confirmText={`Delete "${c.name}"? Products keep existing but lose this category.`}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </CardContent>
+          </Card>
+          <BulkBar entity="category" noun="category" action={bulkDelete} />
+        </BulkProvider>
 
         <Card>
           <CardHeader>

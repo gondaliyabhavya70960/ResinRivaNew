@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { InquiryStatusSelect } from "@/components/studio/inquiry-status-select";
+import { bulkDelete } from "@/actions/bulk";
+import { BulkProvider, BulkBar, BulkCheckbox, BulkSelectAll } from "@/components/studio/bulk/bulk-select";
 
 export const dynamic = "force-dynamic";
 
@@ -37,49 +39,58 @@ export default async function InquiriesPage({
         ))}
       </div>
 
-      <Card>
-        <CardContent className="p-0">
-          {inquiries.length === 0 ? (
-            <p className="p-5 text-sm text-muted-foreground">No inquiries here yet.</p>
-          ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b text-left text-muted-foreground">
-                  <th className="p-4 font-medium">Customer</th>
-                  <th className="hidden p-4 font-medium sm:table-cell">Product</th>
-                  <th className="hidden p-4 font-medium sm:table-cell">Source</th>
-                  <th className="hidden p-4 font-medium md:table-cell">Received</th>
-                  <th className="p-4 font-medium">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {inquiries.map((i) => (
-                  <tr key={i.id}>
-                    <td className="p-4">
-                      <Link href={`/studio/inquiries/${i.id}`} className="font-medium hover:underline">
-                        {i.customerName}
-                      </Link>
-                      <p className="text-xs text-muted-foreground">{i.phone}</p>
-                    </td>
-                    <td className="hidden p-4 text-muted-foreground sm:table-cell">
-                      {i.product?.title ?? "—"}
-                    </td>
-                    <td className="hidden p-4 sm:table-cell">
-                      <Badge variant="muted">{i.source}</Badge>
-                    </td>
-                    <td className="hidden p-4 text-muted-foreground md:table-cell">
-                      {new Date(i.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="p-4">
-                      <InquiryStatusSelect id={i.id} status={i.status} />
-                    </td>
+      <BulkProvider>
+        <Card>
+          <CardContent className="p-0">
+            {inquiries.length === 0 ? (
+              <p className="p-5 text-sm text-muted-foreground">No inquiries here yet.</p>
+            ) : (
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-left text-muted-foreground">
+                    <th className="w-10 p-4">
+                      <BulkSelectAll ids={inquiries.map((i) => i.id)} />
+                    </th>
+                    <th className="p-4 font-medium">Customer</th>
+                    <th className="hidden p-4 font-medium sm:table-cell">Product</th>
+                    <th className="hidden p-4 font-medium sm:table-cell">Source</th>
+                    <th className="hidden p-4 font-medium md:table-cell">Received</th>
+                    <th className="p-4 font-medium">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </CardContent>
-      </Card>
+                </thead>
+                <tbody className="divide-y">
+                  {inquiries.map((i) => (
+                    <tr key={i.id}>
+                      <td className="p-4">
+                        <BulkCheckbox id={i.id} />
+                      </td>
+                      <td className="p-4">
+                        <Link href={`/studio/inquiries/${i.id}`} className="font-medium hover:underline">
+                          {i.customerName}
+                        </Link>
+                        <p className="text-xs text-muted-foreground">{i.phone}</p>
+                      </td>
+                      <td className="hidden p-4 text-muted-foreground sm:table-cell">
+                        {i.product?.title ?? "—"}
+                      </td>
+                      <td className="hidden p-4 sm:table-cell">
+                        <Badge variant="muted">{i.source}</Badge>
+                      </td>
+                      <td className="hidden p-4 text-muted-foreground md:table-cell">
+                        {new Date(i.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="p-4">
+                        <InquiryStatusSelect id={i.id} status={i.status} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </CardContent>
+        </Card>
+        <BulkBar entity="inquiry" noun="inquiry" action={bulkDelete} />
+      </BulkProvider>
     </div>
   );
 }
